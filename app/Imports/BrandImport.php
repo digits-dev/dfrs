@@ -31,9 +31,9 @@ class BrandImport implements ToModel, WithHeadingRow, WithChunkReading, WithVali
     public function rules(): array
     {
         return [
-            'id' => ['required','unique:brands,brand_code'],
+            'id' => ['required','numeric','unique:brands,brand_code'],
             'brand' => ['required'],
-            'status' => ['required']
+            'status' => ['required','in:ACTIVE,INACTIVE']
         ];
     }
 

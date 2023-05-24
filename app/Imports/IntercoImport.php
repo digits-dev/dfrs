@@ -31,9 +31,9 @@ class IntercoImport implements ToModel, WithHeadingRow, WithChunkReading, WithVa
     public function rules(): array
     {
         return [
-            'id' => ['required','unique:inter_companies,inter_company_code'],
+            'id' => ['required','numeric','unique:inter_companies,inter_company_code'],
             'interco' => ['required'],
-            'status' => ['required']
+            'status' => ['required','in:ACTIVE,INACTIVE']
         ];
     }
 

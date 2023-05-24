@@ -4,8 +4,35 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use CRUDBooster;
 
 class Location extends Model
 {
     use HasFactory;
+
+    protected $table = 'locations';
+
+    protected $fillable = [
+        'location_code',
+        'location_name',
+        'status',
+    ];
+
+    public function scopeWithName($query, $location)
+    {
+        return $query->where('location_name',$location)->where('status','ACTIVE')->first();
+    }
+
+    public static function boot()
+    {
+        parent::boot();
+        static::creating(function($model)
+        {
+            $model->created_by = CRUDBooster::myId();
+        });
+        static::updating(function($model)
+        {
+            $model->updated_by = CRUDBooster::myId();
+        });
+    }
 }

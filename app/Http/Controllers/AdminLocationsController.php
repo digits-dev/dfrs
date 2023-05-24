@@ -1,8 +1,11 @@
 <?php namespace App\Http\Controllers;
 
-	use Session;
-	use Request;
-	use DB;
+    use App\Exports\ExcelTemplate;
+use App\Imports\LocationImport;
+use Illuminate\Http\Request;
+    use Maatwebsite\Excel\HeadingRowImport;
+    use Maatwebsite\Excel\Imports\HeadingRowFormatter;
+    use Maatwebsite\Excel\Facades\Excel;
 	use CRUDBooster;
 
 	class AdminLocationsController extends \crocodicstudio\crudbooster\controllers\CBController {
@@ -103,7 +106,7 @@
 	        | @type    = warning,success,danger,info
 	        |
 	        */
-	        $this->alert        = array();
+	        $this->alert = array();
 
 
 
@@ -117,7 +120,9 @@
 	        |
 	        */
 	        $this->index_button = array();
-
+            if(CRUDBooster::getCurrentMethod() == 'getIndex'){
+                $this->index_button[] = ['label'=>'Import '.CRUDBooster::getCurrentModule()->name,'url'=>route('location.upload-view'),'icon'=>'fa fa-upload','color'=>'warning'];
+            }
 
 
 	        /*
@@ -323,6 +328,62 @@
 	        //Your code here
 
 	    }
+
+        public function locationUploadView()
+        {
+            if(!CRUDBooster::isCreate() && $this->global_privilege==FALSE || $this->button_add==FALSE) {
+                CRUDBooster::redirect(CRUDBooster::adminPath(),trans("crudbooster.denied_access"));
+            }
+
+            $data = [];
+            $data['page_title'] = 'Upload Locations';
+            $data['uploadRoute'] = route('location.upload');
+            $data['uploadTemplate'] = route('location.template');
+            return view('location.upload',$data);
+        }
+
+        public function locationUpload(Request $request)
+        {
+            $errors = array();
+			$path_excel = $request->file('import_file')->store('temp');
+			$path = storage_path('app').'/'.$path_excel;
+            HeadingRowFormatter::default('none');
+            $headings = (new HeadingRowImport)->toArray($path);
+            //check headings
+            $header = config('excel-template-headers.location');
+
+			for ($i=0; $i < sizeof($headings[0][0]); $i++) {
+				if (!in_array($headings[0][0][$i], $header)) {
+					$unMatch[] = $headings[0][0][$i];
+				}
+			}
+
+			if(!empty($unMatch)) {
+                return redirect(route('location.upload-view'))->with(['message_type' => 'danger', 'message' => 'Failed ! Please check template headers, mismatched detected.']);
+			}
+            HeadingRowFormatter::default('slug');
+            // $excelData = Excel::toArray(new LocationImport, $path);
+
+            // if(!empty($errors)){
+            //     return redirect()->back()->with(['message_type' => 'danger', 'message' => 'Failed ! Please check '.implode(", ",$errors)]);
+            // }
+
+            $locations = Excel::import(new LocationImport, $path);
+
+            // if($locations->failures()->isNotEmpty()){
+            //     $failures = $locations->failures();
+            //     return view('location.upload-view')->with('message', $failures);
+            // }
+
+            return redirect(CRUDBooster::mainpath())->with(['message_type' => 'success', 'message' => 'Upload complete!']);
+        }
+
+        public function uploadTemplate()
+        {
+            $header = config('excel-template-headers.location');
+            $export = new ExcelTemplate([$header]);
+            return Excel::download($export, 'location-'.date("Ymd").'-'.date("h.i.sa").'.csv');
+        }
 
 
 	}

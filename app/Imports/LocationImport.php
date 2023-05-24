@@ -2,7 +2,7 @@
 
 namespace App\Imports;
 
-use App\Models\Customer;
+use App\Models\Location;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\SkipsOnError;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -10,15 +10,15 @@ use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 
-class CustomerImport implements ToModel, WithHeadingRow, WithChunkReading, WithValidation, SkipsOnError
+class LocationImport implements ToModel, WithHeadingRow, WithChunkReading, WithValidation, SkipsOnError
 {
     use Importable;
 
     public function model(array $row)
     {
-        Customer::updateOrCreate([
-            'customer_code' => trim($row['id']),
-            'customer_name' => trim(strtoupper($row['customer'])),
+        Location::updateOrCreate([
+            'location_code' => trim($row['id']),
+            'location_name' => trim(strtoupper($row['location'])),
             'status' => trim(strtoupper($row['status']))
         ]);
     }
@@ -31,8 +31,8 @@ class CustomerImport implements ToModel, WithHeadingRow, WithChunkReading, WithV
     public function rules(): array
     {
         return [
-            'id' => ['required','unique:customers,customer_code'],
-            'customer' => ['required'],
+            'id' => ['required','numeric','unique:locations,location_code'],
+            'location' => ['required'],
             'status' => ['required','in:ACTIVE,INACTIVE']
         ];
     }
@@ -41,5 +41,4 @@ class CustomerImport implements ToModel, WithHeadingRow, WithChunkReading, WithV
     {
         \Log::error(json_encode($e));
     }
-
 }

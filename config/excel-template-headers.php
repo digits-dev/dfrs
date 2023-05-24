@@ -49,6 +49,12 @@ return [
         'BRAND',
         'STATUS',
     ],
+
+    'location' => [
+        'ID',
+        'LOCATION',
+        'STATUS',
+    ],
 ];
 
 ?>

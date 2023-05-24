@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminTradingPartnersController;
 use App\Http\Controllers\AdminInterCompaniesController;
 use App\Http\Controllers\AdminCategoriesController;
 use App\Http\Controllers\AdminBrandsController;
+use App\Http\Controllers\AdminLocationsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,5 +56,10 @@ Route::group(['prefix'=>'admin'], function(){
     Route::post('brands/import-upload',[AdminBrandsController::class, 'brandUpload'])->name('brand.upload');
     Route::get('brands/import',[AdminBrandsController::class, 'brandUploadView'])->name('brand.upload-view');
     Route::get('brands/template',[AdminBrandsController::class, 'uploadTemplate'])->name('brand.template');
+
+    //import location
+    Route::post('locations/import-upload',[AdminLocationsController::class, 'locationUpload'])->name('location.upload');
+    Route::get('locations/import',[AdminLocationsController::class, 'locationUploadView'])->name('location.upload-view');
+    Route::get('locations/template',[AdminLocationsController::class, 'uploadTemplate'])->name('location.template');
 
 });

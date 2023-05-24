@@ -31,7 +31,9 @@ class TradingPartnerImport implements ToModel, WithHeadingRow, WithChunkReading,
     public function rules(): array
     {
         return [
-            'trading_partner' => ['required','unique:trading_partners,trading_partner']
+            'trading_partner' => ['required','unique:trading_partners,trading_partner'],
+            'status' => ['required','in:ACTIVE,INACTIVE']
+
         ];
     }
 

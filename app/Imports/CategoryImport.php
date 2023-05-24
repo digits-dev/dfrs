@@ -31,9 +31,9 @@ class CategoryImport implements ToModel, WithHeadingRow, WithChunkReading, WithV
     public function rules(): array
     {
         return [
-            'id' => ['required','unique:categories,category_code'],
+            'id' => ['required','numeric','unique:categories,category_code'],
             'category' => ['required'],
-            'status' => ['required']
+            'status' => ['required','in:ACTIVE,INACTIVE']
         ];
     }
 

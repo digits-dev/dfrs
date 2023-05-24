@@ -11,23 +11,39 @@
         <input type="hidden" name="_token" value="{{ csrf_token() }}">
     <div class='panel-body'>
         <div class="col-md-4">
-            Type
-            <select name="type" id="type" class="form-control type" title="Type" required>
-                <option value="">Please select type</option>
-                <option value="pnl">PNL</option>
-                <option value="bs">BS</option>
-            </select>
+            <div class="col-md-12">
+                <b> Report Type </b>
+                <select name="type" id="type" class="form-control type" title="Type" required>
+                    <option value="">Please select report type</option>
+                    <option value="year">BY YEAR</option>
+                    <option value="month">BY MONTH</option>
+                    <option value="quarter">BY QUARTER</option>
+                    <option value="location">BY LOCATION</option>
+                    <option value="company">BY COMPANY</option>
+                    <option value="department">BY DEPARTMENT</option>
+                    <option value="channel">BY CHANNEL</option>
+                    <option value="concepts">BY CONCEPTS</option>
+                </select>
+            </div>
+            <div class="col-md-12">
+                <b> FS Type </b>
+                <select name="type" id="type" class="form-control type" title="Type" required>
+                    <option value="">Please select FS type</option>
+                    <option value="pnl">PNL</option>
+                    <option value="bs">BS</option>
+                </select>
+            </div>
         </div>
 
         <div class="col-md-4">
-            Year
+            <b> Year </b>
             <select name="year" id="year" class="form-control" title="year">
                 <option value="">Please select year</option>
             </select>
         </div>
 
         <div class="col-md-4">
-            Company
+            <b> Company </b>
             <select name="company" id="company" class="form-control" title="company">
                 <option value="">Please select company</option>
                 <option value="dtc">DIGITS TRADING CORP</option>
@@ -49,8 +65,8 @@
         </div> --}}
 
     </div>
-    <div class="panel-footer">
-        <button type="submit" class="btn btn-primary pull-right">Generate</button>
+    <div class="panel-footer" style="overflow: auto;">
+        <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-file-text"> </i> Generate</button>
     </div>
     </form>
 </div>
