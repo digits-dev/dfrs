@@ -43,6 +43,12 @@ return [
         'CATEGORY',
         'STATUS'
     ],
+
+    'brand' => [
+        'ID',
+        'BRAND',
+        'STATUS',
+    ],
 ];
 
 ?>

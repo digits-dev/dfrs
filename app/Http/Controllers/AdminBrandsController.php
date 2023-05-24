@@ -1,8 +1,11 @@
 <?php namespace App\Http\Controllers;
 
-	use Session;
-	use Request;
-	use DB;
+    use App\Exports\ExcelTemplate;
+    use App\Imports\BrandImport;
+    use Illuminate\Http\Request;
+    use Maatwebsite\Excel\HeadingRowImport;
+    use Maatwebsite\Excel\Imports\HeadingRowFormatter;
+    use Maatwebsite\Excel\Facades\Excel;
 	use CRUDBooster;
 
 	class AdminBrandsController extends \crocodicstudio\crudbooster\controllers\CBController {
@@ -117,7 +120,9 @@
 	        |
 	        */
 	        $this->index_button = array();
-
+            if(CRUDBooster::getCurrentMethod() == 'getIndex'){
+                $this->index_button[] = ['label'=>'Import '.CRUDBooster::getCurrentModule()->name,'url'=>route('brand.upload-view'),'icon'=>'fa fa-upload','color'=>'warning'];
+            }
 
 
 	        /*
@@ -323,6 +328,62 @@
 	        //Your code here
 
 	    }
+
+        public function brandUploadView()
+        {
+            if(!CRUDBooster::isCreate() && $this->global_privilege==FALSE || $this->button_add==FALSE) {
+                CRUDBooster::redirect(CRUDBooster::adminPath(),trans("crudbooster.denied_access"));
+            }
+
+            $data = [];
+            $data['page_title'] = 'Upload Brands';
+            $data['uploadRoute'] = route('brand.upload');
+            $data['uploadTemplate'] = route('brand.template');
+            return view('brand.upload',$data);
+        }
+
+        public function brandUpload(Request $request)
+        {
+            $errors = array();
+			$path_excel = $request->file('import_file')->store('temp');
+			$path = storage_path('app').'/'.$path_excel;
+            HeadingRowFormatter::default('none');
+            $headings = (new HeadingRowImport)->toArray($path);
+            //check headings
+            $header = config('excel-template-headers.brand');
+
+			for ($i=0; $i < sizeof($headings[0][0]); $i++) {
+				if (!in_array($headings[0][0][$i], $header)) {
+					$unMatch[] = $headings[0][0][$i];
+				}
+			}
+
+			if(!empty($unMatch)) {
+                return redirect(route('brand.upload-view'))->with(['message_type' => 'danger', 'message' => 'Failed ! Please check template headers, mismatched detected.']);
+			}
+            HeadingRowFormatter::default('slug');
+            // $excelData = Excel::toArray(new BrandImport, $path);
+
+            // if(!empty($errors)){
+            //     return redirect()->back()->with(['message_type' => 'danger', 'message' => 'Failed ! Please check '.implode(", ",$errors)]);
+            // }
+
+            $brands = Excel::import(new BrandImport, $path);
+
+            // if($brands->failures()->isNotEmpty()){
+            //     $failures = $brands->failures();
+            //     return view('brand.upload-view')->with('message', $failures);
+            // }
+
+            return redirect(CRUDBooster::mainpath())->with(['message_type' => 'success', 'message' => 'Upload complete!']);
+        }
+
+        public function uploadTemplate()
+        {
+            $header = config('excel-template-headers.brand');
+            $export = new ExcelTemplate([$header]);
+            return Excel::download($export, 'brand-'.date("Ymd").'-'.date("h.i.sa").'.csv');
+        }
 
 
 	}

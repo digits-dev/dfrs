@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminCustomersController;
 use App\Http\Controllers\AdminTradingPartnersController;
 use App\Http\Controllers\AdminInterCompaniesController;
 use App\Http\Controllers\AdminCategoriesController;
+use App\Http\Controllers\AdminBrandsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +29,7 @@ Route::group(['prefix'=>'admin'], function(){
     Route::get('financial_reports/journal',[AdminFinancialReportsController::class, 'journalUploadView'])->name('fs.upload-view');
     Route::get('financial_reports/template',[AdminFinancialReportsController::class, 'uploadTemplate'])->name('fs.template');
     Route::get('financial_reports/journal-report',[AdminFinancialReportsController::class, 'journalReport'])->name('fs.report');
+    Route::post('financial_reports/generate-report',[AdminFinancialReportsController::class, 'generateReport'])->name('fs.generate-report');
 
     //import customer
     Route::post('customers/import-upload',[AdminCustomersController::class, 'customerUpload'])->name('customer.upload');
@@ -48,5 +50,10 @@ Route::group(['prefix'=>'admin'], function(){
     Route::post('categories/import-upload',[AdminCategoriesController::class, 'categoryUpload'])->name('category.upload');
     Route::get('categories/import',[AdminCategoriesController::class, 'categoryUploadView'])->name('category.upload-view');
     Route::get('categories/template',[AdminCategoriesController::class, 'uploadTemplate'])->name('category.template');
+
+    //import brand
+    Route::post('brands/import-upload',[AdminBrandsController::class, 'brandUpload'])->name('brand.upload');
+    Route::get('brands/import',[AdminBrandsController::class, 'brandUploadView'])->name('brand.upload-view');
+    Route::get('brands/template',[AdminBrandsController::class, 'uploadTemplate'])->name('brand.template');
 
 });
