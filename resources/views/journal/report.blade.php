@@ -7,6 +7,8 @@
 @endpush
 
 <div class='panel panel-default'>
+    <form method='post' id="form" enctype="multipart/form-data" action="{{ route('fs.generate-report') }}">
+        <input type="hidden" name="_token" value="{{ csrf_token() }}">
     <div class='panel-body'>
         <div class="col-md-4">
             Type
@@ -50,6 +52,7 @@
     <div class="panel-footer">
         <button type="submit" class="btn btn-primary pull-right">Generate</button>
     </div>
+    </form>
 </div>
 
 @endsection

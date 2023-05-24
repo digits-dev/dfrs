@@ -412,4 +412,9 @@
             // $data['companies'] =
             return view('journal.report',$data);
         }
+
+        public function generateReport(Request $request)
+        {
+            dd($request->all());
+        }
 	}

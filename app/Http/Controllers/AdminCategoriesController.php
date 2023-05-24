@@ -1,8 +1,8 @@
 <?php namespace App\Http\Controllers;
 
     use App\Exports\ExcelTemplate;
-use App\Imports\CategoryImport;
-use CRUDBooster;
+    use App\Imports\CategoryImport;
+    use CRUDBooster;
     use Illuminate\Http\Request;
     use Maatwebsite\Excel\HeadingRowImport;
     use Maatwebsite\Excel\Imports\HeadingRowFormatter;
