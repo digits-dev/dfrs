@@ -21,6 +21,11 @@ class InvoiceStatus extends Model
         return $query->where('invoice_status',$invoice_status)->where('status','ACTIVE')->first();
     }
 
+    public function scopeActive($query)
+    {
+        return $query->where('status','ACTIVE')->get();
+    }
+
     public static function boot()
     {
         parent::boot();

@@ -21,6 +21,11 @@ class PaymentStatus extends Model
         return $query->where('payment_status',$payment_status)->where('status','ACTIVE')->first();
     }
 
+    public function scopeActive($query)
+    {
+        return $query->where('status','ACTIVE')->get();
+    }
+
     public static function boot()
     {
         parent::boot();

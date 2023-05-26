@@ -22,6 +22,11 @@ class InvoiceType extends Model
         return $query->where('invoice_type',$invoice_type)->where('status','ACTIVE')->first();
     }
 
+    public function scopeActive($query)
+    {
+        return $query->where('status','ACTIVE')->get();
+    }
+
     public static function boot()
     {
         parent::boot();
