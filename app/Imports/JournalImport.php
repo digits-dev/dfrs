@@ -8,15 +8,33 @@ use App\Models\InvoiceStatus;
 use App\Models\InvoiceType;
 use App\Models\PaymentStatus;
 use App\Models\TradingPartner;
+use Carbon\Carbon;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 
-class JournalImport implements ToModel, WithHeadingRow, WithChunkReading, WithValidation
+class JournalImport implements ToModel, WithHeadingRow, WithChunkReading, WithValidation, ShouldQueue
 {
     use Importable;
+
+    private $invoiceTypes;
+    private $tradingPartners;
+    private $invoiceStatuses;
+    private $paymentStatuses;
+    private $currencies;
+
+    public function __construct()
+    {
+        $this->invoiceTypes = InvoiceType::active();
+        $this->tradingPartners = TradingPartner::active();
+        $this->invoiceStatuses = InvoiceStatus::active();
+        $this->paymentStatuses = PaymentStatus::active();
+        $this->currencies = Currency::active();
+    }
+
     /**
     * @param array $row
     *
@@ -24,23 +42,30 @@ class JournalImport implements ToModel, WithHeadingRow, WithChunkReading, WithVa
     */
     public function model(array $row)
     {
+
+        $invoiceType = $this->invoiceTypes->where('invoice_type',$row['invoice_type'])->first();
+        $tradingPartner = $this->tradingPartners->where('trading_partner',$row['trading_partner'])->first();
+        $invoiceStatus = $this->invoiceStatuses->where('invoice_status',$row['invoice_status'])->first();
+        $paymentStatus = $this->paymentStatuses->where('payment_status',$row['payment_status'])->first();
+        $currency = $this->currencies->where('currency_code',$row['currency'])->first();
+
         FinancialReport::updateOrCreate([
-            'invoice_date' => $row['invoice_date'],
+            'invoice_date' => Carbon::parse($row['invoice_date'])->format('Y-m-d'),
             'invoice_number' => $row['invoice_number'],
-            'invoice_types_id' => InvoiceType::withName($row['invoice_type'])->id,
+            'invoice_types_id' => $invoiceType->id ?? NULL,
             'voucher_number' => $row['voucher_number'],
-            'trading_partners_id' => TradingPartner::withName($row['trading_partner'])->id,
-            'invoice_statuses_id' => InvoiceStatus::withName($row['invoice_status'])->id,
-            'payment_statuses_id' => PaymentStatus::withName($row['payment_status'])->id,
+            'trading_partners_id' => $tradingPartner->id ?? NULL,
+            'invoice_statuses_id' => $invoiceStatus->id ?? NULL,
+            'payment_statuses_id' => $paymentStatus->id ?? NULL,
             'is_accounted' => $row['accounting'],
             'amount' => $row['amount'],
-            'currencies_id' => Currency::withCode($row['currency'])->id,
+            'currencies_id' => $currency->id ?? NULL,
             'exchange_rate' => $row['exchange_rate'],
-            'exchange_date' => $row['exchange_date'],
+            'exchange_date' => Carbon::parse($row['exchange_date'])->format('Y-m-d'),
             'invoice_amount' => $row['invoice_amount'],
             'po_number' => $row['po_number'],
-            'gl_date' => $row['gl_date'],
-            'description' => $row['description'],
+            'gl_date' => Carbon::parse($row['gl_date'])->format('Y-m-d'),
+            'description' => trim(strtoupper($row['description'])),
             'chart_account' => $row['account']
 
         ]);

@@ -2,16 +2,19 @@
 
     use App\Exports\ExcelTemplate;
     use App\Imports\JournalImport;
-    use App\Models\InvoiceStatus;
+use App\Models\Currency;
+use App\Models\InvoiceStatus;
     use App\Models\InvoiceType;
     use App\Models\PaymentStatus;
-	use CRUDBooster;
+    use App\Models\TradingPartner;
+    use CRUDBooster;
     use Illuminate\Http\Request;
     use Maatwebsite\Excel\HeadingRowImport;
     use Maatwebsite\Excel\Imports\HeadingRowFormatter;
     use Maatwebsite\Excel\Facades\Excel;
 
 	class AdminFinancialReportsController extends \crocodicstudio\crudbooster\controllers\CBController {
+
 
 	    public function cbInit() {
 
@@ -358,7 +361,7 @@
 			}
 
 			if(!empty($unMatch)) {
-                return redirect(route('journal.upload-view'))->with(['message_type' => 'danger', 'message' => 'Failed ! Please check template headers, mismatched detected.']);
+                return redirect(route('fs.upload-view'))->with(['message_type' => 'danger', 'message' => 'Failed ! Please check template headers, mismatched detected.']);
 			}
             HeadingRowFormatter::default('slug');
             $excelData = Excel::toArray(new JournalImport, $path);
@@ -367,7 +370,7 @@
             $invoiceTypes = array_unique(array_column($excelData[0], "invoice_type"));
             foreach ($invoiceTypes as $invType) {
                 $invTypeDetails = InvoiceType::withName($invType);
-                if(empty($invTypeDetails)){
+                if(empty($invTypeDetails->id)){
                     array_push($errors, 'invoice type "'.$invType.'" not found!');
                 }
             }
@@ -375,7 +378,7 @@
             $invoiceStatuses = array_unique(array_column($excelData[0], "invoice_status"));
             foreach ($invoiceStatuses as $invStatus) {
                 $invStatusDetails = InvoiceStatus::withName($invStatus);
-                if(empty($invStatusDetails)){
+                if(empty($invStatusDetails->id)){
                     array_push($errors, 'invoice status "'.$invStatus.'" not found!');
                 }
             }
@@ -383,13 +386,29 @@
             $paymentStatuses = array_unique(array_column($excelData[0], "payment_status"));
             foreach ($paymentStatuses as $paymentStatus) {
                 $paymentStatusDetails = PaymentStatus::withName($paymentStatus);
-                if(empty($paymentStatusDetails)){
+                if(empty($paymentStatusDetails->id)){
                     array_push($errors, 'payment status "'.$paymentStatus.'" not found!');
                 }
             }
 
+            $tradingPartners = array_unique(array_column($excelData[0], "trading_partner"));
+            foreach ($tradingPartners as $tradingPartner) {
+                $tradingPartnerDetails = TradingPartner::withName($tradingPartner);
+                if(empty($tradingPartnerDetails->id)){
+                    array_push($errors, 'trading partner "'.$tradingPartner.'" not found!');
+                }
+            }
+
+            $currencies = array_unique(array_column($excelData[0], "currency"));
+            foreach ($currencies as $currency) {
+                $currencyDetails = Currency::withCode($currency);
+                if(empty($currencyDetails->id)){
+                    array_push($errors, 'currency "'.$currency.'" not found!');
+                }
+            }
+
             if(!empty($errors)){
-                return redirect()->back()->with(['message_type' => 'danger', 'message' => 'Failed ! Please check '.implode(", ",$errors)]);
+                return redirect()->back()->with(['message_type' => 'danger', 'message' => 'Failed ! Please check '.implode(",<br>",$errors)]);
             }
 
             Excel::import(new JournalImport, $path);
