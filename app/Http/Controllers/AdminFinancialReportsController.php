@@ -2,8 +2,8 @@
 
     use App\Exports\ExcelTemplate;
     use App\Imports\JournalImport;
-use App\Models\Currency;
-use App\Models\InvoiceStatus;
+    use App\Models\Currency;
+    use App\Models\InvoiceStatus;
     use App\Models\InvoiceType;
     use App\Models\PaymentStatus;
     use App\Models\TradingPartner;

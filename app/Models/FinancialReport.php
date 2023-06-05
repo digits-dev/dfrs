@@ -29,7 +29,15 @@ class FinancialReport extends Model
         'po_number',
         'gl_date',
         'description',
-        'chart_account'
+        'chart_account',
+        'company',
+        'location',
+        'department',
+        'account',
+        'customer',
+        'brand',
+        'product',
+        'interco'
     ];
 
     public static function boot()
