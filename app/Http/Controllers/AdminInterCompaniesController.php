@@ -367,12 +367,12 @@ use CRUDBooster;
             //     return redirect()->back()->with(['message_type' => 'danger', 'message' => 'Failed ! Please check '.implode(", ",$errors)]);
             // }
 
-            $intercos = Excel::import(new IntercoImport, $path);
+            $intercos = new IntercoImport;
+            $intercos->import($path);
 
-            // if($intercos->failures()->isNotEmpty()){
-            //     $failures = $intercos->failures();
-            //     return view('interco.upload-view')->with('message', $failures);
-            // }
+            if($intercos->failures()->isNotEmpty()){
+                return back()->withFailures($intercos->failures());
+            }
 
             return redirect(CRUDBooster::mainpath())->with(['message_type' => 'success', 'message' => 'Upload complete!']);
         }
