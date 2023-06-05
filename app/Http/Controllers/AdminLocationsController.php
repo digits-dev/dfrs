@@ -368,12 +368,12 @@ use Illuminate\Http\Request;
             //     return redirect()->back()->with(['message_type' => 'danger', 'message' => 'Failed ! Please check '.implode(", ",$errors)]);
             // }
 
-            $locations = Excel::import(new LocationImport, $path);
+            $locations = new LocationImport;
+            $locations->import($path);
 
-            // if($locations->failures()->isNotEmpty()){
-            //     $failures = $locations->failures();
-            //     return view('location.upload-view')->with('message', $failures);
-            // }
+            if($locations->failures()->isNotEmpty()){
+                return back()->withFailures($locations->failures());
+            }
 
             return redirect(CRUDBooster::mainpath())->with(['message_type' => 'success', 'message' => 'Upload complete!']);
         }
