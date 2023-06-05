@@ -367,12 +367,12 @@
             //     return redirect()->back()->with(['message_type' => 'danger', 'message' => 'Failed ! Please check '.implode(", ",$errors)]);
             // }
 
-            $customers = Excel::import(new CustomerImport, $path);
+            $customers = new CustomerImport;
+            $customers->import($path);
 
-            // if($customers->failures()->isNotEmpty()){
-            //     $failures = $customers->failures();
-            //     return view('customer.upload-view')->with('message', $failures);
-            // }
+            if($customers->failures()->isNotEmpty()){
+                return back()->withFailures($customers->failures());
+            }
 
             return redirect(CRUDBooster::mainpath())->with(['message_type' => 'success', 'message' => 'Upload complete!']);
         }

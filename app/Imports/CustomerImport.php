@@ -4,15 +4,23 @@ namespace App\Imports;
 
 use App\Models\Customer;
 use Maatwebsite\Excel\Concerns\Importable;
+use Maatwebsite\Excel\Concerns\SkipsFailures;
 use Maatwebsite\Excel\Concerns\SkipsOnError;
+use Maatwebsite\Excel\Concerns\SkipsOnFailure;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 
-class CustomerImport implements ToModel, WithHeadingRow, WithChunkReading, WithValidation, SkipsOnError
+class CustomerImport implements
+    ToModel,
+    WithHeadingRow,
+    WithChunkReading,
+    WithValidation,
+    SkipsOnError,
+    SkipsOnFailure
 {
-    use Importable;
+    use Importable, SkipsFailures;
 
     public function model(array $row)
     {
@@ -31,9 +39,9 @@ class CustomerImport implements ToModel, WithHeadingRow, WithChunkReading, WithV
     public function rules(): array
     {
         return [
-            'id' => ['required','unique:customers,customer_code'],
-            'customer' => ['required'],
-            'status' => ['required','in:ACTIVE,INACTIVE']
+            '*.id' => ['required','unique:customers,customer_code'],
+            '*.customer' => ['required'],
+            '*.status' => ['required','in:ACTIVE,INACTIVE']
         ];
     }
 
