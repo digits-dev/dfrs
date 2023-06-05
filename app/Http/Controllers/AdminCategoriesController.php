@@ -368,12 +368,12 @@
             //     return redirect()->back()->with(['message_type' => 'danger', 'message' => 'Failed ! Please check '.implode(", ",$errors)]);
             // }
 
-            $categorys = Excel::import(new CategoryImport, $path);
+            $categoryies = new CategoryImport;
+            $categoryies->import($path);
 
-            // if($categorys->failures()->isNotEmpty()){
-            //     $failures = $categorys->failures();
-            //     return view('category.upload-view')->with('message', $failures);
-            // }
+            if($categoryies->failures()->isNotEmpty()){
+                return back()->withFailures($categoryies->failures());
+            }
 
             return redirect(CRUDBooster::mainpath())->with(['message_type' => 'success', 'message' => 'Upload complete!']);
         }

@@ -8,10 +8,40 @@
         @if($errors->any())
         <div class="alert alert-danger" role="alert">
             <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                {!! implode('', $errors->all('<div>:message</div>')) !!}
-
+                {!! $errors->all() !!}
         </div>
 
+        @endif
+
+        @if (session()->has('failures'))
+        <div class="alert alert-danger" role="alert">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <table class="table table-bordered">
+                <tr>
+                    <th>Row</th>
+                    <th>Attribute</th>
+                    <th>Errors</th>
+                    <th>Value</th>
+                </tr>
+
+                @foreach (session()->get('failures') as $validation)
+                    <tr>
+                        <td>{{ $validation->row() }}</td>
+                        <td>{{ $validation->attribute() }}</td>
+                        <td>
+                            <ul>
+                                @foreach ($validation->errors() as $e)
+                                    <li>{{ $e }}</li>
+                                @endforeach
+                            </ul>
+                        </td>
+                        <td>
+                            {{ $validation->values()[$validation->attribute()] }}
+                        </td>
+                    </tr>
+                @endforeach
+            </table>
+        </div>
         @endif
 
           <form method='post' id='form' enctype='multipart/form-data' action='{{$uploadRoute}}'>
