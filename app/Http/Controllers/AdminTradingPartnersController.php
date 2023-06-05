@@ -365,12 +365,12 @@
             //     return redirect()->back()->with(['message_type' => 'danger', 'message' => 'Failed ! Please check '.implode(", ",$errors)]);
             // }
 
-            $tradingPartners = Excel::import(new TradingPartnerImport, $path);
+            $tradingPartners = new TradingPartnerImport;
+            $tradingPartners->import($path);
 
-            // if($tradingPartners->failures()->isNotEmpty()){
-            //     $failures = $tradingPartners->failures();
-            //     return view('tradingPartner.upload-view')->with('message', $failures);
-            // }
+            if ($tradingPartners->failures()->isNotEmpty()) {
+                return back()->withFailures($tradingPartners->failures());
+            }
 
             return redirect(CRUDBooster::mainpath())->with(['message_type' => 'success', 'message' => 'Upload complete!']);
         }
