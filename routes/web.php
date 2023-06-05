@@ -8,6 +8,7 @@ use App\Http\Controllers\AdminInterCompaniesController;
 use App\Http\Controllers\AdminCategoriesController;
 use App\Http\Controllers\AdminBrandsController;
 use App\Http\Controllers\AdminLocationsController;
+use App\Http\Controllers\AdminChartAccountsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -61,5 +62,10 @@ Route::group(['prefix'=>'admin'], function(){
     Route::post('locations/import-upload',[AdminLocationsController::class, 'locationUpload'])->name('location.upload');
     Route::get('locations/import',[AdminLocationsController::class, 'locationUploadView'])->name('location.upload-view');
     Route::get('locations/template',[AdminLocationsController::class, 'uploadTemplate'])->name('location.template');
+
+    //import location
+    Route::post('chart_accounts/import-upload',[AdminChartAccountsController::class, 'chartAccountUpload'])->name('chart-account.upload');
+    Route::get('chart_accounts/import',[AdminChartAccountsController::class, 'chartAccountUploadView'])->name('chart-account.upload-view');
+    Route::get('chart_accounts/template',[AdminChartAccountsController::class, 'uploadTemplate'])->name('chart-account.template');
 
 });

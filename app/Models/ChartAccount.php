@@ -10,13 +10,12 @@ class ChartAccount extends Model
 {
     use HasFactory;
 
-    protected $table = 'currencies';
+    protected $table = 'chart_accounts';
 
     protected $fillable = [
         'fs',
-        'header',
-        'parent',
-        'child',
+        'chart_account_types_id',
+        'chart_account_subtypes_id',
         'chart_code',
         'chart_account',
         'status',

@@ -55,6 +55,15 @@ return [
         'LOCATION',
         'STATUS',
     ],
+
+    'chart-account' => [
+        'FS TYPE',
+        'CHART ACCOUNT TYPE',
+        'CHART ACCOUNT SUBTYPE',
+        'CHART ACCOUNT CODE',
+        'CHART ACCOUNT DESCRIPTION',
+        'STATUS',
+    ],
 ];
 
 ?>

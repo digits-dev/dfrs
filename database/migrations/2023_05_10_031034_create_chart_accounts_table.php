@@ -16,9 +16,8 @@ class CreateChartAccountsTable extends Migration
         Schema::create('chart_accounts', function (Blueprint $table) {
             $table->id();
             $table->string('fs',5)->nullable();
-            $table->string('header',150)->nullable();
-            $table->string('parent',150)->nullable();
-            $table->string('child',150)->nullable();
+            $table->string('chart_account_types_id',150)->nullable();
+            $table->string('chart_account_subtypes_id',150)->nullable();
             $table->string('chart_code',50)->nullable();
             $table->string('chart_account',150)->nullable();
             $table->string('status', 10)->default('ACTIVE')->nullable();
