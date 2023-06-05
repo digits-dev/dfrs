@@ -368,12 +368,12 @@
             //     return redirect()->back()->with(['message_type' => 'danger', 'message' => 'Failed ! Please check '.implode(", ",$errors)]);
             // }
 
-            $brands = Excel::import(new BrandImport, $path);
+            $brands = new BrandImport;
+            $brands->import($path);
 
-            // if($brands->failures()->isNotEmpty()){
-            //     $failures = $brands->failures();
-            //     return view('brand.upload-view')->with('message', $failures);
-            // }
+            if($brands->failures()->isNotEmpty()){
+                return back()->withFailures($brands->failures());
+            }
 
             return redirect(CRUDBooster::mainpath())->with(['message_type' => 'success', 'message' => 'Upload complete!']);
         }
