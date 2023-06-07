@@ -15,4 +15,9 @@ class ChartAccountSubtype extends Model
         'chart_account_subtype',
         'status',
     ];
+
+    public function scopeActive($query)
+    {
+        return $query->where('status','ACTIVE')->get();
+    }
 }
