@@ -19,6 +19,8 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Events\AfterImport;
 use CRUDBooster;
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\InteractsWithQueue;
 
 class JournalImport implements
     ToModel,
@@ -28,7 +30,7 @@ class JournalImport implements
     WithEvents,
     ShouldQueue
 {
-    use Importable, RegistersEventListeners;
+    use Importable, RegistersEventListeners, Queueable, InteractsWithQueue;
 
     private $invoiceTypes;
     private $tradingPartners;
