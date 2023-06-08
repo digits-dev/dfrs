@@ -12,6 +12,7 @@
     use Maatwebsite\Excel\HeadingRowImport;
     use Maatwebsite\Excel\Imports\HeadingRowFormatter;
     use Maatwebsite\Excel\Facades\Excel;
+    use DB;
 
 	class AdminFinancialReportsController extends \crocodicstudio\crudbooster\controllers\CBController {
 
@@ -438,6 +439,78 @@
 
         public function generateReport(Request $request)
         {
-            dd($request->all());
+            // dd($request->all());
+
+            $data = [];
+            $data['page_title'] = 'PNL Report';
+            $cogs = DB::table('cogs_by_year_month')->whereBetween('pnldate',['2023-01','2023-03'])
+                ->where('customer_name',$request->company)
+                ->get();
+
+            $opex = DB::table('opex_by_year_month')->whereBetween('pnldate',['2023-01','2023-03'])
+                ->where('customer_name',$request->company)
+                ->get();
+
+            $cogs_key = [];
+            foreach ($cogs as $key => $value) {
+                if(!in_array($value->chart_account_subtype,$cogs_key)){
+                    $cogs_key[$value->chart_account_subtype][$value->pnldate] = [
+                        'pnldate' => $value->pnldate,
+                        'amount' => $value->amount,
+                        'customer_name' => $value->customer_name,
+                    ];
+                }
+            }
+
+            $opex_key = [];
+            foreach ($opex as $key => $value) {
+                if(!in_array($value->chart_account_subtype,$opex_key)){
+                    $opex_key[$value->chart_account_subtype][$value->pnldate] = [
+                        'pnldate' => $value->pnldate,
+                        'amount' => $value->amount,
+                        'customer_name' => $value->customer_name,
+                    ];
+                }
+            }
+
+            $revenues = DB::table('revenue_by_year_month')->whereBetween('pnldate',['2023-01','2023-03'])
+                ->where('customer_name',$request->company)
+                ->get();
+
+            $revenues_key = [];
+            foreach ($revenues as $key => $value) {
+                if(!in_array($value->chart_account_subtype,$revenues_key)){
+                    $revenue_key[$value->chart_account_subtype][$value->pnldate] = [
+                        'pnldate' => $value->pnldate,
+                        'amount' => $value->amount,
+                        'customer_name' => $value->customer_name,
+                    ];
+                }
+            }
+
+
+            $otex = DB::table('otex_by_year_month')->whereBetween('pnldate',['2023-01','2023-03'])
+                ->where('customer_name',$request->company)
+                ->get();
+
+            $otex_key = [];
+            foreach ($otex as $key => $value) {
+                if(!in_array($value->chart_account_subtype,$otex_key)){
+                    $otex_key[$value->chart_account_subtype][$value->pnldate] = [
+                        'pnldate' => $value->pnldate,
+                        'amount' => $value->amount,
+                        'customer_name' => $value->customer_name,
+                    ];
+                }
+            }
+
+            $data['cogs']  = $cogs_key;
+            $data['opex']  = $opex_key;
+            $data['revenues'] = $revenues_key;
+            $data['otex']  = $otex_key;
+
+            // dd($data);
+
+            return view('journal.pnl-report',$data);
         }
 	}

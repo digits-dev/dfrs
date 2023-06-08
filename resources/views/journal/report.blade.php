@@ -46,7 +46,7 @@
             <b> Company </b>
             <select name="company" id="company" class="form-control" title="company">
                 <option value="">Please select company</option>
-                <option value="dtc">DIGITS TRADING CORP</option>
+                <option value="DIGITS">DIGITS TRADING CORP</option>
             </select>
         </div>
 
