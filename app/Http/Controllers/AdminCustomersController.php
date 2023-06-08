@@ -15,7 +15,7 @@
 			# START CONFIGURATION DO NOT REMOVE THIS LINE
 			$this->title_field = "customer_name";
 			$this->limit = "20";
-			$this->orderby = "customer_code,asc";
+			$this->orderby = "customer_name,asc";
 			$this->global_privilege = false;
 			$this->button_table_action = true;
 			$this->button_bulk_action = true;

@@ -15,7 +15,7 @@
 			# START CONFIGURATION DO NOT REMOVE THIS LINE
 			$this->title_field = "category_name";
 			$this->limit = "20";
-			$this->orderby = "category_code,asc";
+			$this->orderby = "category_name,asc";
 			$this->global_privilege = false;
 			$this->button_table_action = true;
 			$this->button_bulk_action = true;

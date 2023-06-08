@@ -1,8 +1,8 @@
 <?php namespace App\Http\Controllers;
 
     use App\Exports\ExcelTemplate;
-use App\Imports\LocationImport;
-use Illuminate\Http\Request;
+    use App\Imports\LocationImport;
+    use Illuminate\Http\Request;
     use Maatwebsite\Excel\HeadingRowImport;
     use Maatwebsite\Excel\Imports\HeadingRowFormatter;
     use Maatwebsite\Excel\Facades\Excel;
@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 			# START CONFIGURATION DO NOT REMOVE THIS LINE
 			$this->title_field = "location_name";
 			$this->limit = "20";
-			$this->orderby = "location_code,asc";
+			$this->orderby = "location_name,asc";
 			$this->global_privilege = false;
 			$this->button_table_action = true;
 			$this->button_bulk_action = true;

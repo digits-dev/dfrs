@@ -1,8 +1,8 @@
 <?php namespace App\Http\Controllers;
 
     use App\Exports\ExcelTemplate;
-use App\Imports\IntercoImport;
-use CRUDBooster;
+    use App\Imports\IntercoImport;
+    use CRUDBooster;
     use Illuminate\Http\Request;
     use Maatwebsite\Excel\HeadingRowImport;
     use Maatwebsite\Excel\Imports\HeadingRowFormatter;
@@ -15,7 +15,7 @@ use CRUDBooster;
 			# START CONFIGURATION DO NOT REMOVE THIS LINE
 			$this->title_field = "inter_company_name";
 			$this->limit = "20";
-			$this->orderby = "inter_company_code,asc";
+			$this->orderby = "inter_company_name,asc";
 			$this->global_privilege = false;
 			$this->button_table_action = true;
 			$this->button_bulk_action = true;
