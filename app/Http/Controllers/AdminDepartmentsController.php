@@ -1,18 +1,21 @@
 <?php namespace App\Http\Controllers;
 
-	use Session;
-	use Request;
-	use DB;
-	use CRUDBooster;
+    use App\Exports\ExcelTemplate;
+use App\Imports\DepartmentImport;
+use Illuminate\Http\Request;
+    use Maatwebsite\Excel\HeadingRowImport;
+    use Maatwebsite\Excel\Imports\HeadingRowFormatter;
+    use Maatwebsite\Excel\Facades\Excel;
+    use CRUDBooster;
 
 	class AdminDepartmentsController extends \crocodicstudio\crudbooster\controllers\CBController {
 
 	    public function cbInit() {
 
 			# START CONFIGURATION DO NOT REMOVE THIS LINE
-			$this->title_field = "deparment_name";
+			$this->title_field = "department_name";
 			$this->limit = "20";
-			$this->orderby = "deparment_code,asc";
+			$this->orderby = "department_name,asc";
 			$this->global_privilege = false;
 			$this->button_table_action = true;
 			$this->button_bulk_action = true;
@@ -30,8 +33,8 @@
 
 			# START COLUMNS DO NOT REMOVE THIS LINE
 			$this->col = [];
-			$this->col[] = ["label"=>"Deparment Code","name"=>"deparment_code"];
-			$this->col[] = ["label"=>"Deparment Name","name"=>"deparment_name"];
+			$this->col[] = ["label"=>"Deparment Code","name"=>"department_code"];
+			$this->col[] = ["label"=>"Deparment Name","name"=>"department_name"];
 			$this->col[] = ["label"=>"Status","name"=>"status"];
 			$this->col[] = ["label"=>"Created By","name"=>"created_by","join"=>"cms_users,name"];
 			$this->col[] = ["label"=>"Created Date","name"=>"created_at"];
@@ -40,8 +43,8 @@
 
 			# START FORM DO NOT REMOVE THIS LINE
 			$this->form = [];
-			$this->form[] = ['label'=>'Deparment Code','name'=>'deparment_code','type'=>'text','validation'=>'required|min:1|max:20','width'=>'col-sm-6'];
-			$this->form[] = ['label'=>'Deparment Name','name'=>'deparment_name','type'=>'text','validation'=>'required|min:1|max:150','width'=>'col-sm-6'];
+			$this->form[] = ['label'=>'Deparment Code','name'=>'department_code','type'=>'text','validation'=>'required|min:1|max:20','width'=>'col-sm-6'];
+			$this->form[] = ['label'=>'Deparment Name','name'=>'department_name','type'=>'text','validation'=>'required|min:1|max:150','width'=>'col-sm-6'];
 			if(in_array(CRUDBooster::getCurrentMethod(),['getEdit','postEditSave','getDetail'])) {
 				$this->form[] = ['label'=>'Status','name'=>'status','type'=>'select','validation'=>'required','width'=>'col-sm-6','dataenum'=>'ACTIVE;INACTIVE'];
 			}
@@ -116,7 +119,9 @@
 	        |
 	        */
 	        $this->index_button = array();
-
+            if(CRUDBooster::getCurrentMethod() == 'getIndex'){
+                $this->index_button[] = ['label'=>'Import '.CRUDBooster::getCurrentModule()->name,'url'=>route('department.upload-view'),'icon'=>'fa fa-upload','color'=>'warning'];
+            }
 
 
 	        /*
@@ -322,6 +327,62 @@
 	        //Your code here
 
 	    }
+
+        public function departmentUploadView()
+        {
+            if(!CRUDBooster::isCreate() && $this->global_privilege==FALSE || $this->button_add==FALSE) {
+                CRUDBooster::redirect(CRUDBooster::adminPath(),trans("crudbooster.denied_access"));
+            }
+
+            $data = [];
+            $data['page_title'] = 'Upload Departments';
+            $data['uploadRoute'] = route('department.upload');
+            $data['uploadTemplate'] = route('department.template');
+            return view('department.upload',$data);
+        }
+
+        public function departmentUpload(Request $request)
+        {
+            $errors = array();
+			$path_excel = $request->file('import_file')->store('temp');
+			$path = storage_path('app').'/'.$path_excel;
+            HeadingRowFormatter::default('none');
+            $headings = (new HeadingRowImport)->toArray($path);
+            //check headings
+            $header = config('excel-template-headers.department');
+
+			for ($i=0; $i < sizeof($headings[0][0]); $i++) {
+				if (!in_array($headings[0][0][$i], $header)) {
+					$unMatch[] = $headings[0][0][$i];
+				}
+			}
+
+			if(!empty($unMatch)) {
+                return redirect(route('department.upload-view'))->with(['message_type' => 'danger', 'message' => 'Failed ! Please check template headers, mismatched detected.']);
+			}
+            HeadingRowFormatter::default('slug');
+            // $excelData = Excel::toArray(new DepartmentImport, $path);
+
+            // if(!empty($errors)){
+            //     return redirect()->back()->with(['message_type' => 'danger', 'message' => 'Failed ! Please check '.implode(", ",$errors)]);
+            // }
+
+            $departments = new DepartmentImport;
+            $departments->import($path);
+
+            if($departments->failures()->isNotEmpty()){
+                return back()->withFailures($departments->failures());
+            }
+
+            return redirect(CRUDBooster::mainpath())->with(['message_type' => 'success', 'message' => 'Upload complete!']);
+        }
+
+        public function uploadTemplate()
+        {
+            $header = config('excel-template-headers.department');
+            $export = new ExcelTemplate([$header]);
+            return Excel::download($export, 'department-'.date("Ymd").'-'.date("h.i.sa").'.csv');
+        }
 
 
 	}

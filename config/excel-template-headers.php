@@ -56,6 +56,12 @@ return [
         'STATUS',
     ],
 
+    'department' => [
+        'ID',
+        'DEPARTMENT',
+        'STATUS',
+    ],
+
     'chart-account' => [
         'FS TYPE',
         'CHART ACCOUNT TYPE',
