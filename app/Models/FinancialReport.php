@@ -52,4 +52,9 @@ class FinancialReport extends Model
             $model->updated_by = CRUDBooster::myId();
         });
     }
+
+    public function setDescriptionAttribute($description)
+    {
+        $this->attributes['description'] = mb_strtoupper($description);
+    }
 }
