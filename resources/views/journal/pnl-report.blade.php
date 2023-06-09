@@ -41,32 +41,31 @@
 
                 </thead>
                 <tbody>
-                    <tr>
+                    <tr class="revenue">
                         @if (!empty($revenues))
                             @foreach($revenues as $key => $rev)
                             <th>{{ $key }}</th>
                                 @foreach($rev as $key_rev => $value_rev)
-                                    <td>P {{ number_format($value_rev['amount'],2) }}</td>
+                                    <td class="revenue-amount" data-id="{{ $value_rev['pnldate'] }}">P {{ number_format($value_rev['amount'],2) }}</td>
                                 @endforeach
                             @endforeach
                         @else
                             <th>REVENUE</th>
                             @foreach($cogs as $key => $cog)
                                 @foreach($cog as $key_cog => $value_cog)
-                                    <td> P 0.00</td>
+                                    <td class="revenue-amount"> P 0.00</td>
                                 @endforeach
                             @endforeach
                         @endif
-
                     </tr>
 
                     {{-- cogs --}}
                     @foreach($cogs as $key => $cog)
-                    <tr>
+                    <tr class="cogs">
                         <th>{{ $key }}</th>
                             @foreach($cogs as $key => $cog)
                                 @foreach($cog as $key_cog => $value_cog)
-                                    <td>P {{ number_format($value_cog['amount'],2) }}</td>
+                                    <td class="cogs-amount" data-id="{{ $value_cog['pnldate'] }}">P {{ number_format($value_cog['amount'],2) }}</td>
                                 @endforeach
                             @endforeach
                     </tr>
@@ -76,8 +75,8 @@
                     <tr>
                         <th>GROSS INCOME</th>
                     @foreach($gross_income as $key => $gi)
-                        @foreach($cogs as $key => $cog)
-                                <td>P {{ number_format($gi['amount'],2) }}</td>
+                        @foreach($cogs as $key_cog => $cog)
+                                <td class="income {{ $key }}">P {{ number_format($gi['amount'],2) }}</td>
                         @endforeach
                     @endforeach
                     </tr>
@@ -126,7 +125,22 @@
 
 @push('bottom')
 <script type="text/javascript">
+    let sum = 0;
+    let row = {}
 
+    $(".table tr").each(function (index) {
+        let revenue = $(this).find('td.revenue-amount');
+        let cogs = $(this).find('td.cogs-amount');
+
+        revenue = Number(revenue.text().replace(/[^0-9.]/g, ''));
+        cogs = Number(cogs.text().replace(/[^0-9.]/g, ''));
+        row[index] = revenue - cogs;
+        // const primary = $(this).find('td.revenue-amount');
+        // console.log(primary.text());
+        // sum += Number(primary.text().replace(/[^0-9.]/g, ''));
+    })
+
+    console.log(row);
 
 </script>
 @endpush

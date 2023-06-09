@@ -349,7 +349,7 @@
         {
             $errors = array();
             $request->validate([
-                'import_file' => 'required|mimes:csv,txt,xlx,xls|max:5024'
+                'import_file' => 'required|mimes:csv,txt,xlx,xls|max:1028'
             ]);
 
 			$path_excel = $request->file('import_file')->storeAs('temp',$request->import_file->getClientOriginalName(),'local');
@@ -519,7 +519,7 @@
             $data['otex']  = $otex_key;
             $data['gross_income'] = $gross_income;
 
-            // dd($data);
+            dd($data);
 
             return view('journal.pnl-report',$data);
         }
