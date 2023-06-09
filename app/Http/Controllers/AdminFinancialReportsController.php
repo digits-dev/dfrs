@@ -349,7 +349,7 @@
         {
             $errors = array();
             $request->validate([
-                'import_file' => 'required|mimes:csv,txt,xlx,xls|max:1028'
+                'import_file' => 'required|mimes:csv,txt,xlx,xls|max:10000'
             ]);
 
 			$path_excel = $request->file('import_file')->storeAs('temp',$request->import_file->getClientOriginalName(),'local');
