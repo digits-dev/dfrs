@@ -13,6 +13,7 @@ class ChartAccountSubtype extends Model
 
     protected $fillable = [
         'chart_account_subtype',
+        'sequence',
         'status',
     ];
 

@@ -32,6 +32,7 @@
 			$this->col = [];
 			$this->col[] = ["label"=>"Chart Account Type","name"=>"chart_account_types_id","join"=>"chart_account_types,chart_account_type"];
 			$this->col[] = ["label"=>"Chart Account Subtype","name"=>"chart_account_subtype"];
+            $this->col[] = ["label"=>"Sequence","name"=>"sequence"];
 			$this->col[] = ["label"=>"Status","name"=>"status"];
 			$this->col[] = ["label"=>"Created By","name"=>"created_by","join"=>"cms_users,name"];
 			$this->col[] = ["label"=>"Created Date","name"=>"created_at"];
@@ -42,7 +43,8 @@
 			# START FORM DO NOT REMOVE THIS LINE
 			$this->form = [];
 			$this->form[] = ['label'=>'Chart Account Type','name'=>'chart_account_types_id','type'=>'select2','validation'=>'required|integer|min:0','width'=>'col-sm-6','datatable'=>'chart_account_types,chart_account_type'];
-			$this->form[] = ['label'=>'Chart Account Subtype','name'=>'chart_account_subtype','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-6'];
+			$this->form[] = ['label'=>'Chart Account Subtype','name'=>'chart_account_subtype','type'=>'text','validation'=>'required|min:1|max:150','width'=>'col-sm-6'];
+            $this->form[] = ['label'=>'Sequence','name'=>'sequence','type'=>'number','validation'=>'required','width'=>'col-sm-6'];
 			if(in_array(CRUDBooster::getCurrentMethod(),['getEdit','postEditSave','getDetail'])) {
 				$this->form[] = ['label'=>'Status','name'=>'status','type'=>'select','validation'=>'required','width'=>'col-sm-6','dataenum'=>'ACTIVE;INACTIVE'];
 			}
