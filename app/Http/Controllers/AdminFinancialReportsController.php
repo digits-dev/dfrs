@@ -449,6 +449,7 @@
 
             $opex = DB::table('opex_by_year_month')->whereBetween('pnldate',['2023-01','2023-03'])
                 ->where('customer_name',$request->company)
+                ->orderBy('sequence','ASC')
                 ->get();
 
             $cogs_key = [];
