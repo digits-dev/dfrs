@@ -23,6 +23,11 @@ class Customer extends Model
         return $query->where('customer_name',$customer)->where('status','ACTIVE')->first();
     }
 
+    public function scopeActive($query)
+    {
+        return $query->where('status','ACTIVE')->get();
+    }
+
     public static function boot()
     {
         parent::boot();
