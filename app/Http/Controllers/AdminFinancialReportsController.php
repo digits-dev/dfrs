@@ -481,7 +481,7 @@
             $revenues_key = [];
             foreach ($revenues as $key => $value) {
                 if(!in_array($value->chart_account_subtype,$revenues_key)){
-                    $revenue_key[$value->chart_account_subtype][$value->pnldate] = [
+                    $revenues_key[$value->chart_account_subtype][$value->pnldate] = [
                         'pnldate' => $value->pnldate,
                         'amount' => $value->amount,
                         'customer_name' => $value->customer_name,
