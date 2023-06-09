@@ -72,6 +72,16 @@
                     </tr>
                     @endforeach
 
+                    {{-- gross income --}}
+                    <tr>
+                        <th>GROSS INCOME</th>
+                    @foreach($gross_income as $key => $gi)
+                        @foreach($cogs as $key => $cog)
+                                <td>P {{ number_format($gi['amount'],2) }}</td>
+                        @endforeach
+                    @endforeach
+                    </tr>
+
                     {{-- opex --}}
                     <tr>
                         <th colspan="100%">OPERATING EXPENSE</th>

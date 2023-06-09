@@ -443,6 +443,14 @@
 
             $data = [];
             $data['page_title'] = 'PNL Report';
+            $revenue_gi = [];
+            $cog_gi = [];
+            $gross_income = [];
+
+            $revenues = DB::table('revenue_by_year_month')->whereBetween('pnldate',['2023-01','2023-03'])
+                ->where('customer_name',$request->company)
+                ->get();
+
             $cogs = DB::table('cogs_by_year_month')->whereBetween('pnldate',['2023-01','2023-03'])
                 ->where('customer_name',$request->company)
                 ->get();
@@ -452,6 +460,18 @@
                 ->orderBy('sequence','ASC')
                 ->get();
 
+            $revenue_key = [];
+            foreach ($revenues as $key => $value) {
+                if(!in_array($value->chart_account_subtype,$revenue_key)){
+                    $revenue_key[$value->chart_account_subtype][$value->pnldate] = [
+                        'pnldate' => $value->pnldate,
+                        'amount' => $value->amount,
+                        'customer_name' => $value->customer_name,
+                    ];
+                    $revenue_gi[$value->pnldate] = ['amount' => $value->amount];
+                }
+            }
+
             $cogs_key = [];
             foreach ($cogs as $key => $value) {
                 if(!in_array($value->chart_account_subtype,$cogs_key)){
@@ -459,6 +479,10 @@
                         'pnldate' => $value->pnldate,
                         'amount' => $value->amount,
                         'customer_name' => $value->customer_name,
+                    ];
+                    $cog_gi[$value->pnldate] = ['amount' => $value->amount];
+                    $gross_income[$value->pnldate] = [
+                        'amount' => ($revenue_gi[$value->pnldate]['amount'])-($value->amount),
                     ];
                 }
             }
@@ -473,22 +497,6 @@
                     ];
                 }
             }
-
-            $revenues = DB::table('revenue_by_year_month')->whereBetween('pnldate',['2023-01','2023-03'])
-                ->where('customer_name',$request->company)
-                ->get();
-
-            $revenues_key = [];
-            foreach ($revenues as $key => $value) {
-                if(!in_array($value->chart_account_subtype,$revenues_key)){
-                    $revenues_key[$value->chart_account_subtype][$value->pnldate] = [
-                        'pnldate' => $value->pnldate,
-                        'amount' => $value->amount,
-                        'customer_name' => $value->customer_name,
-                    ];
-                }
-            }
-
 
             $otex = DB::table('otex_by_year_month')->whereBetween('pnldate',['2023-01','2023-03'])
                 ->where('customer_name',$request->company)
@@ -507,8 +515,9 @@
 
             $data['cogs']  = $cogs_key;
             $data['opex']  = $opex_key;
-            $data['revenues'] = $revenues_key;
+            $data['revenues'] = $revenue_key;
             $data['otex']  = $otex_key;
+            $data['gross_income'] = $gross_income;
 
             // dd($data);
 
