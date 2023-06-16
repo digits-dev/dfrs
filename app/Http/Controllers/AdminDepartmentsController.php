@@ -344,7 +344,10 @@ use Illuminate\Http\Request;
         public function departmentUpload(Request $request)
         {
             $errors = array();
-			$path_excel = $request->file('import_file')->store('temp');
+            $request->validate([
+                'import_file' => 'required|mimes:csv,txt,xlx,xls|max:1024'
+            ]);
+			$path_excel = $request->file('import_file')->store('temp',$request->import_file->getClientOriginalName(),'local');
 			$path = storage_path('app').'/'.$path_excel;
             HeadingRowFormatter::default('none');
             $headings = (new HeadingRowImport)->toArray($path);
