@@ -443,84 +443,31 @@
 
             $data = [];
             $data['page_title'] = 'PNL Report';
-            $revenue_gi = [];
-            $cog_gi = [];
-            $gross_income = [];
+            $pnl_report = new FinancialReportController();
 
-            $revenues = DB::table('revenue_by_year_month')->whereBetween('pnldate',['2023-01','2023-03'])
-                ->where('customer_name',$request->company)
-                ->get();
+            // dd($final_cogs,$final_revenue);
+            switch ($request->report_type) {
+                case 'month':
+                    {
+                        $data = $pnl_report->byCompanyYearMonth($request);
+                        // dd($data);
+                        return view('journal.pnl-by-month',$data);
+                    }
+                    break;
 
-            $cogs = DB::table('cogs_by_year_month')->whereBetween('pnldate',['2023-01','2023-03'])
-                ->where('customer_name',$request->company)
-                ->get();
+                case 'year':
+                    {
+                        $data = $pnl_report->byCompanyYear($request);
+                        // dd($data);
+                        return view('journal.pnl-by-year',$data);
+                    }
+                    break;
 
-            $opex = DB::table('opex_by_year_month')->whereBetween('pnldate',['2023-01','2023-03'])
-                ->where('customer_name',$request->company)
-                ->orderBy('sequence','ASC')
-                ->get();
-
-            $revenue_key = [];
-            foreach ($revenues as $key => $value) {
-                if(!in_array($value->chart_account_subtype,$revenue_key)){
-                    $revenue_key[$value->chart_account_subtype][$value->pnldate] = [
-                        'pnldate' => $value->pnldate,
-                        'amount' => $value->amount,
-                        'customer_name' => $value->customer_name,
-                    ];
-                    $revenue_gi[$value->pnldate] = ['amount' => $value->amount];
-                }
+                default:
+                    # code...
+                    break;
             }
 
-            $cogs_key = [];
-            foreach ($cogs as $key => $value) {
-                if(!in_array($value->chart_account_subtype,$cogs_key)){
-                    $cogs_key[$value->chart_account_subtype][$value->pnldate] = [
-                        'pnldate' => $value->pnldate,
-                        'amount' => $value->amount,
-                        'customer_name' => $value->customer_name,
-                    ];
-                    $cog_gi[$value->pnldate] = ['amount' => $value->amount];
-                    $gross_income[$value->pnldate] = [
-                        'amount' => ($revenue_gi[$value->pnldate]['amount'])-($value->amount),
-                    ];
-                }
-            }
 
-            $opex_key = [];
-            foreach ($opex as $key => $value) {
-                if(!in_array($value->chart_account_subtype,$opex_key)){
-                    $opex_key[$value->chart_account_subtype][$value->pnldate] = [
-                        'pnldate' => $value->pnldate,
-                        'amount' => $value->amount,
-                        'customer_name' => $value->customer_name,
-                    ];
-                }
-            }
-
-            $otex = DB::table('otex_by_year_month')->whereBetween('pnldate',['2023-01','2023-03'])
-                ->where('customer_name',$request->company)
-                ->get();
-
-            $otex_key = [];
-            foreach ($otex as $key => $value) {
-                if(!in_array($value->chart_account_subtype,$otex_key)){
-                    $otex_key[$value->chart_account_subtype][$value->pnldate] = [
-                        'pnldate' => $value->pnldate,
-                        'amount' => $value->amount,
-                        'customer_name' => $value->customer_name,
-                    ];
-                }
-            }
-
-            $data['cogs']  = $cogs_key;
-            $data['opex']  = $opex_key;
-            $data['revenues'] = $revenue_key;
-            $data['otex']  = $otex_key;
-            $data['gross_income'] = $gross_income;
-
-            dd($data);
-
-            return view('journal.pnl-report',$data);
         }
 	}
