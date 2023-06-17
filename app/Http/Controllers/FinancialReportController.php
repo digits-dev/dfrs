@@ -221,7 +221,7 @@ class FinancialReportController extends Controller
         $final_cogs = DB::select('call cogs_by_location_year_month_pivot("'.$request->location.'")');
         $final_revenue = DB::select('call revenue_by_location_year_month_pivot("'.$request->location.'")');
         $final_opex = DB::select('call opex_by_location_year_month_pivot("'.$request->location.'","'.$request->year.'-01","'.$request->year.'-'.str_pad($request->month,2,"0",STR_PAD_LEFT).'")');
-        $final_otex = DB::select('call otex_by_location_year_month_pivot("'.$request->location.'")');
+        $final_otex = DB::select('call otex_by_location_year_month_pivot("'.$request->location.'","'.$request->year.'-01","'.$request->year.'-'.str_pad($request->month,2,"0",STR_PAD_LEFT).'")');
         // $final_opex = DB::select('call opex_by_year_month_pivot()');
 
         $revenues = DB::table('revenue_by_location_year_month')
