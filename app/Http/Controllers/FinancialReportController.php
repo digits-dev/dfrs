@@ -139,7 +139,7 @@ class FinancialReportController extends Controller
         $final_cogs = DB::select('call cogs_by_year_month_pivot()');
         $final_revenue = DB::select('call revenue_by_year_month_pivot()');
         $final_otex = DB::select('call otex_by_year_month_pivot()');
-        $final_opex = DB::select('call opex_by_year_month_pivot()');
+        $final_opex = DB::select('call opex_by_year_month_pivot("'.$request->year.'-01',$request->year.'-'.$request->month.'")');
 
         $revenues = DB::table('revenue_by_year_month')
             ->whereBetween('pnldate',[$request->year.'-01',$request->year.'-'.$request->month])
