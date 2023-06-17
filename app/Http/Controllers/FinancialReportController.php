@@ -139,20 +139,20 @@ class FinancialReportController extends Controller
         $final_cogs = DB::select('call cogs_by_year_month_pivot()');
         $final_revenue = DB::select('call revenue_by_year_month_pivot()');
         $final_otex = DB::select('call otex_by_year_month_pivot()');
-        $final_opex = DB::select('call opex_by_year_month_pivot("'.$request->year.'-01","'.$request->year.'-'.$request->month.'")');
+        $final_opex = DB::select('call opex_by_year_month_pivot("'.$request->year.'-01","'.$request->year.'-'.str_pad($request->month,2,"0",STR_PAD_LEFT).'")');
 
         $revenues = DB::table('revenue_by_year_month')
-            ->whereBetween('pnldate',[$request->year.'-01',$request->year.'-'.$request->month])
+            ->whereBetween('pnldate',[$request->year.'-01',$request->year.'-'.str_pad($request->month,2,"0",STR_PAD_LEFT)])
             ->where('customer_name',$request->company)
             ->get();
 
         $cogs = DB::table('cogs_by_year_month')
-            ->whereBetween('pnldate',[$request->year.'-01',$request->year.'-'.$request->month])
+            ->whereBetween('pnldate',[$request->year.'-01',$request->year.'-'.str_pad($request->month,2,"0",STR_PAD_LEFT)])
             ->where('customer_name',$request->company)
             ->get();
 
         $opex = DB::table('opex_by_year_month')
-            ->whereBetween('pnldate',[$request->year.'-01',$request->year.'-'.$request->month])
+            ->whereBetween('pnldate',[$request->year.'-01',$request->year.'-'.str_pad($request->month,2,"0",STR_PAD_LEFT)])
             ->where('customer_name',$request->company)
             ->orderBy('sequence','ASC')
             ->orderBy('pnldate','ASC')
@@ -160,7 +160,7 @@ class FinancialReportController extends Controller
 
         $opex_sum = DB::table('opex_by_year_month')
             ->select('pnldate',DB::raw('sum(amount) as sum_amount'),'customer_name')
-            ->whereBetween('pnldate',[$request->year.'-01',$request->year.'-'.$request->month])
+            ->whereBetween('pnldate',[$request->year.'-01',$request->year.'-'.str_pad($request->month,2,"0",STR_PAD_LEFT)])
             ->where('customer_name',$request->company)
             ->groupBy('pnldate','customer_name')
             ->get();
@@ -168,19 +168,19 @@ class FinancialReportController extends Controller
         $gross_income = DB::table('final_gross_income_by_year_month')
             ->select(DB::raw("pnldate, SUM(gross_income) as gross_income"))
             ->where('customer_name',$request->company)
-            ->whereBetween('pnldate',[$request->year.'-01',$request->year.'-'.$request->month])
+            ->whereBetween('pnldate',[$request->year.'-01',$request->year.'-'.str_pad($request->month,2,"0",STR_PAD_LEFT)])
             ->groupBy('pnldate')
             ->orderBy('pnldate','ASC')
             ->get()->toArray();
 
         $otex = DB::table('otex_by_year_month')
-            ->whereBetween('pnldate',[$request->year.'-01',$request->year.'-'.$request->month])
+            ->whereBetween('pnldate',[$request->year.'-01',$request->year.'-'.str_pad($request->month,2,"0",STR_PAD_LEFT)])
             ->where('customer_name',$request->company)
             ->get();
 
         $otex_sum = DB::table('otex_by_year_month')
             ->select('pnldate',DB::raw('sum(amount) as sum_amount'),'customer_name')
-            ->whereBetween('pnldate',[$request->year.'-01',$request->year.'-'.$request->month])
+            ->whereBetween('pnldate',[$request->year.'-01',$request->year.'-'.str_pad($request->month,2,"0",STR_PAD_LEFT)])
             ->where('customer_name',$request->company)
             ->groupBy('pnldate','customer_name')
             ->get();
@@ -220,24 +220,24 @@ class FinancialReportController extends Controller
 
         $final_cogs = DB::select('call cogs_by_location_year_month_pivot("'.$request->location.'")');
         $final_revenue = DB::select('call revenue_by_location_year_month_pivot("'.$request->location.'")');
-        $final_opex = DB::select('call opex_by_location_year_month_pivot("'.$request->location.'")');
+        $final_opex = DB::select('call opex_by_location_year_month_pivot("'.$request->location.'","'.$request->year.'-01","'.$request->year.'-'.str_pad($request->month,2,"0",STR_PAD_LEFT).'")');
         $final_otex = DB::select('call otex_by_location_year_month_pivot("'.$request->location.'")');
         // $final_opex = DB::select('call opex_by_year_month_pivot()');
 
         $revenues = DB::table('revenue_by_location_year_month')
-            ->whereBetween('pnldate',[$request->year.'-01',$request->year.'-'.$request->month])
+            ->whereBetween('pnldate',[$request->year.'-01',$request->year.'-'.str_pad($request->month,2,"0",STR_PAD_LEFT)])
             ->where('customer_name',$request->company)
             ->where('location_name',$request->location)
             ->get();
 
         $cogs = DB::table('cogs_by_location_year_month')
-            ->whereBetween('pnldate',[$request->year.'-01',$request->year.'-'.$request->month])
+            ->whereBetween('pnldate',[$request->year.'-01',$request->year.'-'.str_pad($request->month,2,"0",STR_PAD_LEFT)])
             ->where('customer_name',$request->company)
             ->where('location_name',$request->location)
             ->get();
 
         $opex = DB::table('opex_by_location_year_month')
-            ->whereBetween('pnldate',[$request->year.'-01',$request->year.'-'.$request->month])
+            ->whereBetween('pnldate',[$request->year.'-01',$request->year.'-'.str_pad($request->month,2,"0",STR_PAD_LEFT)])
             ->where('customer_name',$request->company)
             ->where('location_name',$request->location)
             ->orderBy('sequence','ASC')
@@ -246,20 +246,20 @@ class FinancialReportController extends Controller
 
         $opex_sum = DB::table('opex_by_location_year_month')
             ->select('pnldate',DB::raw('sum(amount) as sum_amount'),'customer_name','location_name')
-            ->whereBetween('pnldate',[$request->year.'-01',$request->year.'-'.$request->month])
+            ->whereBetween('pnldate',[$request->year.'-01',$request->year.'-'.str_pad($request->month,2,"0",STR_PAD_LEFT)])
             ->where('customer_name',$request->company)
             ->where('location_name',$request->location)
             ->groupBy('pnldate','customer_name','location_name')
             ->get();
 
         $gross_income = DB::table('final_gross_income_by_location_year_month')
-            ->whereBetween('pnldate',[$request->year.'-01',$request->year.'-'.$request->month])
+            ->whereBetween('pnldate',[$request->year.'-01',$request->year.'-'.str_pad($request->month,2,"0",STR_PAD_LEFT)])
             ->where('customer_name',$request->company)
             ->where('location_name',$request->location)
             ->get();
 
         $otex = DB::table('otex_by_location_year_month')
-            ->whereBetween('pnldate',[$request->year.'-01',$request->year.'-'.$request->month])
+            ->whereBetween('pnldate',[$request->year.'-01',$request->year.'-'.str_pad($request->month,2,"0",STR_PAD_LEFT)])
             ->where('customer_name',$request->company)
             ->where('location_name',$request->location)
             ->get();
