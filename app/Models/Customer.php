@@ -25,7 +25,7 @@ class Customer extends Model
 
     public function scopeActive($query)
     {
-        return $query->where('status','ACTIVE')->get();
+        return $query->where('status','ACTIVE')->orderBy('customer_name','ASC')->get();
     }
 
     public static function boot()

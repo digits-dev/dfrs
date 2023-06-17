@@ -3,9 +3,11 @@
     use App\Exports\ExcelTemplate;
     use App\Imports\JournalImport;
     use App\Models\Currency;
-    use App\Models\InvoiceStatus;
+use App\Models\Customer;
+use App\Models\InvoiceStatus;
     use App\Models\InvoiceType;
-    use App\Models\PaymentStatus;
+use App\Models\Location;
+use App\Models\PaymentStatus;
     use App\Models\TradingPartner;
     use CRUDBooster;
     use Illuminate\Http\Request;
@@ -433,7 +435,8 @@
         {
             $data = [];
             $data['page_title'] = 'Generate Report';
-            // $data['companies'] =
+            $data['companies'] = Customer::active();
+            $data['locations'] = Location::active();
             return view('journal.report',$data);
         }
 
@@ -445,7 +448,6 @@
             $data['page_title'] = 'PNL Report';
             $pnl_report = new FinancialReportController();
 
-            // dd($final_cogs,$final_revenue);
             switch ($request->report_type) {
                 case 'month':
                     {
@@ -460,6 +462,14 @@
                         $data = $pnl_report->byCompanyYear($request);
                         // dd($data);
                         return view('journal.pnl-by-year',$data);
+                    }
+                    break;
+
+                case 'location':
+                    {
+                        $data = $pnl_report->byLocationYearMonth($request);
+                        // dd($data);
+                        return view('journal.pnl-by-location',$data);
                     }
                     break;
 

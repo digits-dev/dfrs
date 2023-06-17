@@ -23,6 +23,11 @@ class Location extends Model
         return $query->where('location_name',$location)->where('status','ACTIVE')->first();
     }
 
+    public function scopeActive($query)
+    {
+        return $query->where('status','ACTIVE')->orderBy('location_name','ASC')->get();
+    }
+
     public static function boot()
     {
         parent::boot();

@@ -1,0 +1,333 @@
+
+@extends('crudbooster::admin_template')
+@section('content')
+
+@push('head')
+<style type="text/css">
+
+    table.table.table-bordered td {
+      border: 1px solid black;
+    }
+
+    table.table.table-bordered tr {
+      border: 1px solid black;
+    }
+
+    table.table.table-bordered th {
+      border: 1px solid black;
+    }
+</style>
+@endpush
+
+<div class='panel panel-default'>
+    {{-- <form method='post' id="form" enctype="multipart/form-data" action="{{ route('fs.generate-report') }}"> --}}
+        {{-- <input type="hidden" name="_token" value="{{ csrf_token() }}"> --}}
+    <div class='panel-body'>
+        <div class="col-md-12">
+            <div class="text-center">
+                <h4> <b>PNL YEAR {{ $year }}</b> </h4>
+            </div>
+
+            <table class="table table-bordered" id="pnl-month">
+                <thead>
+                    <tr>
+                        <th class="text-center" width="20%">{{ $company }}</th>
+                        @foreach($columnYear as $key => $year)
+                            <th class="text-center">{{ $year }}</th>
+                            <th>%</th>
+                        @endforeach
+                    </tr>
+
+                </thead>
+                <tbody>
+                    {{-- revenue --}}
+                    <tr class="revenue">
+                        @if(!empty($revenues) && count($revenues) != 0)
+                        <th>REVENUE</th>
+                            @foreach($columnYear as $key => $revYear)
+                                <th class="revenue-amount" data-id="{{ $revYear }}">{{ number_format($revenues_data[0]->$revYear,2) }}</th>
+                                <th>100%</th>
+                            @endforeach
+                        @else
+                            <th>REVENUE</th>
+                            <td colspan="0"><span>0.00</span></td>
+                        @endif
+                    </tr>
+
+                    {{-- cogs --}}
+                    @if(!empty($cogs) && count($cogs) != 0)
+                        @foreach($cogs_data as $key => $cog)
+                        <tr class="cogs">
+                            <th>{{ $cog->chart_account_subtype }}</th>
+                                @foreach($columnYear as $key => $cogYear)
+                                    <th class="cogs-amount" data-id="{{ $cogYear }}">{{ number_format($cog->$cogYear,2) }}</th>
+                                    <th><span class="cogs-percentage-{{ $cogYear }}">%</span></th>
+                                @endforeach
+                        </tr>
+                        @endforeach
+                    @else
+                    <tr class="cogs">
+                        <th>COST OF SALES</th>
+                        <td colspan="0"><span>0.00</span></td>
+                    </tr>
+                    @endif
+
+                    {{-- gross income --}}
+                    <tr>
+                        <th>GROSS INCOME</th>
+                        @if(!empty($gross_income))
+                        @foreach($gross_income as $key => $gi)
+                            @if($columnYear[$key] == $gi->pnldate)
+                            <th class="gross-amount" data-id="{{ $columnYear[$key] }}">{{ number_format($gi->gross_income,2) }}</th>
+                            <th><span class="gross-percentage-{{ $columnYear[$key] }}">%</span></th>
+                            @endif
+
+                        @endforeach
+                        @else
+                            <td colspan="0"><span>0.00</span></td>
+                        @endif
+                    </tr>
+
+                    {{-- opex --}}
+                    <tr>
+                        <th colspan="100%">OPERATING EXPENSE</th>
+                    </tr>
+                    @if(!empty($opex) && count($opex) != 0)
+                    @foreach($opex_data as $key => $opx)
+
+                    <tr>
+                        <td class="opex-name" data-name="{{ $opx->chart_account_subtype }}">{{ $opx->chart_account_subtype }}</td>
+                            @foreach($columnYear as $keyYear => $opexYear)
+                                <td class="opex-amount" data-id="{{ $opexYear }}" data-opex="{{ $key }}">{{ number_format($opx->$opexYear,2) }}</td>
+                                <th><span class="opex-percentage-{{ $opexYear }}{{ $key }}">%</span></th>
+                            @endforeach
+                    </tr>
+                    @endforeach
+                    @else
+                        <th></th>
+                        <td colspan="0"><span>0.00</span></td>
+                    @endif
+
+                    {{-- opex total --}}
+                    @if(!empty($opex_sum) && count($opex_sum) != 0)
+                    <tr class="opex-total">
+                    <td></td>
+                    @foreach($opex_sum as $key => $opx)
+                        @if($columnYear[$key] == $opx->pnldate)
+                        <th class="opex-total-amount" data-id="{{ $columnYear[$key] }}">{{ number_format($opx->sum_amount,2) }}</th>
+                        <th><span class="opex-total-percentage-{{ $columnYear[$key] }}">%</span></th>
+                        @endif
+                    @endforeach
+                    </tr>
+                    @else
+                        <td></td>
+                        <td colspan="0"><span>0.00</span></td>
+                        <th>%</th>
+                    @endif
+
+                    {{-- noi --}}
+                    <tr>
+                        <th>NET OPERATING INCOME</th>
+                        @if(!empty($columnYear) && count($columnYear) != 0)
+                            @foreach($columnYear as $key => $year)
+                                <th><span class="noi-amount-{{ $year }}">0.00</span></th>
+                                <th><span class="noi-percentage-{{ $year }}">%</span></th>
+                            @endforeach
+                        @else
+                            <th colspan="0"></th>
+                        @endif
+
+                    </tr>
+
+                    {{-- otex --}}
+                    <tr>
+                        <th colspan="100%">OTHER EXPENSE</th>
+                    </tr>
+                    @if(!empty($otex) && count($otex) != 0)
+                    @foreach($otex_data as $key => $otx)
+                    <tr>
+                        <td>{{ $otx->chart_account_subtype }}</td>
+                        @foreach($columnYear as $keyYear => $otexYear)
+                            <td class="otex-amount" data-id="{{ $otexYear }}" data-otex="{{ $key }}">{{ number_format($otx->$otexYear,2) }}</td>
+                            <th><span class="otex-percentage-{{ $otexYear }}{{ $key }}">%</span></th>
+                        @endforeach
+                    </tr>
+                    @endforeach
+
+                    <tr style="display: none">
+                        <td></td>
+                        @foreach($otex_sum as $key => $otxSum)
+                            @if($columnYear[$key] == $otxSum->pnldate)
+                            <th class="otex-total-amount" data-id="{{ $columnYear[$key] }}">{{ number_format($otxSum->sum_amount,2) }}</th>
+                            <th></th>
+                            @endif
+                        @endforeach
+                    </tr>
+
+                    @else
+                        <th></th>
+                        <td colspan="0"><span>0.00</span></td>
+                    @endif
+
+                    {{-- ebitda --}}
+                    <tr>
+                        <th>EBITDA</th>
+                        @if(!empty($columnYear) && count($columnYear) != 0)
+                            @foreach($columnYear as $key => $year)
+                                <th><span class="ebitda-amount-{{ $year }}">0.00</span></th>
+                                <th><span class="ebitda-percentage-{{ $year }}">%</span></th>
+                            @endforeach
+                        @else
+                            <th colspan="0"></th>
+                        @endif
+
+                    </tr>
+
+                    {{-- total-expense --}}
+                    <tr>
+                        <th>TOTAL EXPENSE</th>
+                        @if(!empty($columnYear) && count($columnYear) != 0)
+                            @foreach($columnYear as $key => $year)
+                                <th><span class="total-expense-amount-{{ $year }}">0.00</span></th>
+                                <th><span class="total-expense-percentage-{{ $year }}">%</span></th>
+                            @endforeach
+                        @else
+                            <th colspan="0"></th>
+                        @endif
+
+                    </tr>
+            </table>
+
+        </div>
+
+    </div>
+    <div class="panel-footer" style="overflow: auto;">
+        <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-file-text"> </i> Export</button>
+    </div>
+    {{-- </form> --}}
+</div>
+
+@endsection
+
+@push('bottom')
+<script type="text/javascript">
+
+    document.title="PNL Report By Month";
+
+    let rev = [];
+    let grossPercentage = [];
+    let grossAmount = [];
+    let opexTotalAmount = [];
+    let cogsPercentage = [];
+    let opexPercentage = [];
+    let opexTotalPercentage = [];
+    let otexPercentage = [];
+    let depreciation = [];
+    let otherExpense = [];
+
+    var pnlTable = document.getElementById('pnl-month');
+    if(pnlTable) {
+        Array.from(pnlTable.rows).forEach((tr, row_ind) => {
+            Array.from(tr.cells).forEach((cell, col_ind) => {
+                let cellValue = cell.textContent;
+
+                if(cell.className == 'revenue-amount'){
+                    rev[cell.attributes[1].textContent] = parseFloat(cellValue.replace(/[^0-9]*\,/g, ''));
+                }
+
+                if(cell.className == 'cogs-amount'){
+                    cogsPercentage[cell.attributes[1].textContent] = parseFloat(cellValue.replace(/[^0-9]*\,/g, ''))/rev[cell.attributes[1].textContent];
+                }
+
+                if(cell.className == 'gross-amount'){
+                    grossAmount[cell.attributes[1].textContent] = parseFloat(cellValue.replace(/[^0-9]*\,/g, ''));
+                    grossPercentage[cell.attributes[1].textContent] = parseFloat(cellValue.replace(/[^0-9]*\,/g, ''))/rev[cell.attributes[1].textContent];
+                }
+
+                if(cell.className == 'opex-amount'){
+                    opexPercentage[cell.attributes[1].textContent+cell.attributes[2].textContent] = parseFloat(cellValue.replace(/[^0-9]*\,/g, ''))/rev[cell.attributes[1].textContent];
+                }
+
+                if(cell.className == 'opex-name' && cell.attributes[1].textContent == "DEPRECIATION"){
+                    depreciation[cell.attributes[1].textContent] = cell.textContent;
+                }
+
+                if(cell.className == 'otex-amount'){
+                    otexPercentage[cell.attributes[1].textContent+cell.attributes[2].textContent] = parseFloat(cellValue.replace(/[^0-9]*\,/g, ''))/rev[cell.attributes[1].textContent];
+                }
+
+                if(cell.className == 'opex-total-amount'){
+                    opexTotalAmount[cell.attributes[1].textContent] = parseFloat(cellValue.replace(/[^0-9]*\,/g, ''));
+                    opexTotalPercentage[cell.attributes[1].textContent] = parseFloat(cellValue.replace(/[^0-9]*\,/g, ''))/rev[cell.attributes[1].textContent];
+                }
+
+                if(cell.className == 'otex-total-amount'){
+                    otherExpense[cell.attributes[1].textContent] = parseFloat(cellValue.replace(/[^0-9]*\,/g, ''));
+                }
+
+            });
+        });
+    }
+
+    Object.keys(cogsPercentage).forEach(key => {
+        let cogP = cogsPercentage[key]*100;
+        $('.cogs-percentage-'+key).html(cogP.toFixed(2)+'%');
+    });
+
+    Object.keys(opexPercentage).forEach(key => {
+        let opexP = opexPercentage[key]*100;
+        $('.opex-percentage-'+key).html(opexP.toFixed(2)+'%');
+    });
+
+    Object.keys(otexPercentage).forEach(key => {
+        let otexP = otexPercentage[key]*100;
+        $('.otex-percentage-'+key).html(otexP.toFixed(2)+'%');
+    });
+
+    Object.keys(opexTotalPercentage).forEach(key => {
+        let opxTotalP = opexTotalPercentage[key]*100;
+        $('.opex-total-percentage-'+key).html(opxTotalP.toFixed(2)+'%');
+    });
+
+    Object.keys(grossPercentage).forEach(key => {
+        let grossP = grossPercentage[key]*100;
+        $('.gross-percentage-'+key).html(grossP.toFixed(2)+'%');
+    });
+
+    Object.keys(grossAmount).forEach(key => {
+        let grossA = grossAmount[key];
+        let opexA = opexTotalAmount[key];
+        let noiA = grossA-opexA;
+        let noiP = (noiA/rev[key])*100;
+        let depA = parseFloat(depreciation[key]);
+        let ebitda = parseFloat(noiA);
+
+        $('.noi-amount-'+key).html(Number(parseFloat(noiA).toFixed(2)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('.noi-percentage-'+key).html(noiP.toFixed(2)+'%');
+
+        if(!isNaN(depA)){
+            ebitda = parseFloat(noiA)+depA;
+            let ebitdaP = ebitda/rev[key];
+
+            $('.ebitda-amount-'+key).html(Number(parseFloat(ebitda).toFixed(2)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('.ebitda-percentage-'+key).html(ebitdaP.toFixed(2)+'%');
+        }
+        else{
+            let ebitdaP = ebitda/rev[key]*100;
+
+            $('.ebitda-amount-'+key).html(Number(parseFloat(ebitda).toFixed(2)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+            $('.ebitda-percentage-'+key).html(ebitdaP.toFixed(2)+'%');
+        }
+
+    });
+
+    Object.keys(otherExpense).forEach(key => {
+        let totalExpenseA = opexTotalAmount[key]+otherExpense[key];
+        let totalExpenseP = totalExpenseA/rev[key]*100;
+
+        $('.total-expense-amount-'+key).html(Number(parseFloat(totalExpenseA).toFixed(2)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('.total-expense-percentage-'+key).html(totalExpenseP.toFixed(2)+'%');
+    });
+
+</script>
+@endpush
