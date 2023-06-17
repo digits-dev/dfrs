@@ -13,7 +13,7 @@
         <div class="col-md-4">
             <div class="col-md-12">
                 <b> Report Type </b>
-                <select name="type" id="type" class="form-control type" title="Type" required>
+                <select name="report_type" id="report_type" class="form-control report-type" title="Type" required>
                     <option value="">Please select report type</option>
                     <option value="year">BY YEAR</option>
                     <option value="month">BY MONTH</option>
@@ -27,7 +27,7 @@
             </div>
             <div class="col-md-12">
                 <b> FS Type </b>
-                <select name="type" id="type" class="form-control type" title="Type" required>
+                <select name="fs_type" id="fs_type" class="form-control fs-type" title="Type" required>
                     <option value="">Please select FS type</option>
                     <option value="pnl">PNL</option>
                     <option value="bs">BS</option>
@@ -35,34 +35,43 @@
             </div>
         </div>
 
-        <div class="col-md-4">
-            <b> Year </b>
-            <select name="year" id="year" class="form-control" title="year">
-                <option value="">Please select year</option>
-            </select>
+        <div class="col-md-8">
+
+            <div class="col-md-4">
+                <b> Year </b>
+                <select name="year" id="year" class="form-control" title="year">
+                    <option value="">Please select year</option>
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <b> Company </b>
+                <select name="company" id="company" class="form-control" title="company">
+                    <option value="">Please select company</option>
+                    <option value="DIGITS">DIGITS TRADING CORP</option>
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <b> Location </b>
+                <select name="location" id="location" class="form-control" title="location" disabled>
+                    <option value="">Please select location</option>
+                    @foreach ($locations as $location)
+                        <option value="{{ $location->location_name }}">{{ $location->location_name }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <b> Month </b>
+                <select name="month" id="month" class="form-control" title="month" disabled>
+                    <option value="">Please select month</option>
+                </select>
+            </div>
+
         </div>
 
-        <div class="col-md-4">
-            <b> Company </b>
-            <select name="company" id="company" class="form-control" title="company">
-                <option value="">Please select company</option>
-                <option value="DIGITS">DIGITS TRADING CORP</option>
-            </select>
-        </div>
 
-        {{-- <div class="col-md-3">
-            Brand
-            <select name="brand" id="brand" class="form-control" title="brand">
-                <option value="">Please select brand</option>
-            </select>
-        </div> --}}
-
-        {{-- <div class="col-md-3">
-            Category
-            <select name="category" id="category" class="form-control" title="category">
-                <option value="">Please select category</option>
-            </select>
-        </div> --}}
 
     </div>
     <div class="panel-footer" style="overflow: auto;">
@@ -76,35 +85,59 @@
 @push('bottom')
 <script type="text/javascript">
 
-        const monthNames = ["January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-        ];
-        let currentYear = new Date().getFullYear();
-        let earliestYear = 2019;
-        var to_dy = new Date();
-        var selected_ch = 0;
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+    let currentYear = new Date().getFullYear();
+    let earliestYear = 2019;
+    var to_dy = new Date();
+    var selected_ch = 0;
 
-        while (currentYear >= earliestYear) {
-            $('#year').append($('<option>').val(currentYear).text(currentYear));
-            currentYear -= 1;
-        }
-
-
-        for (var m = 0; m < 12; m++) {
-            $('#month').append($('<option>').val(m+1).text(monthNames[m]));
-        }
+    while (currentYear >= earliestYear) {
+        $('#year').append($('<option>').val(currentYear).text(currentYear));
+        currentYear -= 1;
+    }
 
 
-        $('#year').change(function () {
+    for (var m = 0; m < 12; m++) {
+        $('#month').append($('<option>').val(m+1).text(monthNames[m]));
+    }
 
-            if($("#year").val() == to_dy.getFullYear()){
-                $('#month').empty();
-                $('#month').append($('<option>').val('').text("Please select month"));
-                for (var m = 0; m < (to_dy.getMonth()+1); m++) {
-                    $('#month').append($('<option>').val(m+1).text(monthNames[m]));
-                }
+
+    $('#year').change(function () {
+
+        if($("#year").val() == to_dy.getFullYear()){
+            $('#month').empty();
+            $('#month').append($('<option>').val('').text("Please select month"));
+            for (var m = 0; m < (to_dy.getMonth()+1); m++) {
+                $('#month').append($('<option>').val(m+1).text(monthNames[m]));
             }
+        }
 
-        });
+    });
+
+    $('#report_type').change(function(){
+        let reportType = $(this).val();
+        switch (reportType) {
+            case 'year':
+
+            break;
+
+            case 'month':
+                $('#month').removeAttr('disabled');
+            break;
+
+            case 'location':
+                $('#location').removeAttr('disabled');
+                $('#month').removeAttr('disabled');
+            break;
+
+            default:
+                break;
+        }
+    });
+
+
+
 </script>
 @endpush

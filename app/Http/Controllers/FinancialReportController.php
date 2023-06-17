@@ -252,10 +252,11 @@ class FinancialReportController extends Controller
             ->groupBy('pnldate','customer_name','location_name')
             ->get();
 
-        // $gross_income = DB::table('final_gross_income_by_year')
-        //     ->whereBetween('pnldate',[$request->year.'-01',$request->year.'-'.$request->month])
-        //     ->where('customer_name',$request->company)
-        //     ->get();
+        $gross_income = DB::table('final_gross_income_by_location_year_month')
+            ->whereBetween('pnldate',[$request->year.'-01',$request->year.'-'.$request->month])
+            ->where('customer_name',$request->company)
+            ->where('location_name',$request->location)
+            ->get();
 
         $otex = DB::table('otex_by_location_year_month')
             ->whereBetween('pnldate',[$request->year.'-01',$request->year.'-'.$request->month])
@@ -271,7 +272,7 @@ class FinancialReportController extends Controller
         $data['opex'] = $opex;
         $data['opex_data'] = $final_opex;
         $data['opex_sum'] = $opex_sum;
-        // $data['gross_income'] = $gross_income;
+        $data['gross_income'] = $gross_income;
         $data['otex'] = $otex;
         $data['otex_data'] = $final_otex;
         $data['year'] = $request->year;
