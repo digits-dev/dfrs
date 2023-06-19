@@ -125,11 +125,14 @@
 
             case 'month':
                 $('#month').removeAttr('disabled');
+                $('#month').prop('required',true);
             break;
 
             case 'location':
                 $('#location').removeAttr('disabled');
+                $('#location').prop('required',true);
                 $('#month').removeAttr('disabled');
+                $('#month').prop('required',true);
             break;
 
             default:
