@@ -23,6 +23,11 @@ class InterCompany extends Model
         return $query->where('inter_company_name',$inter_company)->where('status','ACTIVE')->first();
     }
 
+    public function scopeActive($query)
+    {
+        return $query->where('status','ACTIVE')->orderBy('inter_company_name','ASC')->get();
+    }
+
     public static function boot()
     {
         parent::boot();

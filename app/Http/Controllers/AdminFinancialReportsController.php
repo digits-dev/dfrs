@@ -3,11 +3,11 @@
     use App\Exports\ExcelTemplate;
     use App\Imports\JournalImport;
     use App\Models\Currency;
-use App\Models\Customer;
-use App\Models\InvoiceStatus;
+    use App\Models\InterCompany;
+    use App\Models\InvoiceStatus;
     use App\Models\InvoiceType;
-use App\Models\Location;
-use App\Models\PaymentStatus;
+    use App\Models\Location;
+    use App\Models\PaymentStatus;
     use App\Models\TradingPartner;
     use CRUDBooster;
     use Illuminate\Http\Request;
@@ -435,7 +435,7 @@ use App\Models\PaymentStatus;
         {
             $data = [];
             $data['page_title'] = 'Generate Report';
-            $data['companies'] = Customer::active();
+            $data['companies'] = InterCompany::active();
             $data['locations'] = Location::active();
             return view('journal.report',$data);
         }

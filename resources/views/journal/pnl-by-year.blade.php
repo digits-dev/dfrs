@@ -29,9 +29,9 @@
             </div>
 
             <table class="table table-bordered" id="pnl-year">
-                <thead>
+                <thead style="background-color: #0047ab; color:white;">
                     <tr>
-                        <th width="30%"></th>
+                        <th class="text-center" width="30%">{{ $company }}</th>
                         @if(!empty($revenues) && count($revenues) != 0)
                             @foreach($revenues as $key => $rev)
                                 <th class="text-center">{{ $rev->pnldate }}</th>
@@ -73,22 +73,15 @@
                     <tr class="cogs">
                         <th>COST OF SALES</th>
                         <td colspan="0"><span>0.00</span></td>
-                        <th>%</th>
+                        <th>0.00%</th>
                     </tr>
                     @endif
 
                     {{-- gross income --}}
                     <tr>
                         <th>GROSS INCOME</th>
-                        @if(!empty($gross_income) && count($gross_income) != 0)
-                        @foreach($gross_income as $key => $gi)
-                            <th class="gincome"><span class="gross-income"> {{ number_format($gi->gross_income,2) }} </span></th>
-                            <th class="gross-percent"><span class="gross-percentage">%</span></th>
-                        @endforeach
-                        @else
-                            <td colspan="0"><span>0.00</span></td>
-                            <th>%</th>
-                        @endif
+                        <th class="gincome"><span class="gross-income">0.00</span></th>
+                        <th class="gross-percent"><span class="gross-percentage">0%</span></th>
                     </tr>
 
                     {{-- opex --}}
@@ -180,24 +173,15 @@
 
     document.title="PNL Report By Year";
 
-    let rev = parseFloat($('.revenue-amount').text().replace(/[^0-9]*\,/g, ''));
-    let gross = parseFloat($('.gross-income').html().replace(/[^0-9]*\,/g, ''));
-    let opexTotal = parseFloat($('.opex-total-amount').html().replace(/[^0-9]*\,/g, ''));
-    let gross_percentage = gross/rev;
-    let opex_percentage = opexTotal/rev;
-    let noi = gross-opexTotal;
-    let noi_percentage = noi/rev;
-
-    $('.gross-percentage').html(gross_percentage.toFixed(2)+'%');
-    $('.opex-total-percentage').html(opex_percentage.toFixed(2)+'%');
-    $('.noi-amount').html(Number(parseFloat(noi).toFixed(2)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-    $('.noi-percentage').html(noi_percentage.toFixed(2)+'%');
+    let revAmount = parseFloat($('.revenue-amount').text().replace(/[^0-9]*\,/g, ''));
 
     let cogsPercentage = [];
+    let cogsAmount = [];
     let opexPercentage = [];
     let otexPercentage = [];
     let depreciation = 0;
     let otherExpense = 0;
+    let cogsTAmount = 0;
 
     var pnlTable = document.getElementById('pnl-year');
     if(pnlTable) {
@@ -206,11 +190,12 @@
                 let cellValue = cell.textContent;
 
                 if(cell.className == 'cogs-amount'){
-                    cogsPercentage[cell.attributes[1].textContent] = parseFloat(cellValue.replace(/[^0-9]*\,/g, ''))/rev;
+                    cogsPercentage[cell.attributes[1].textContent] = parseFloat(cellValue.replace(/[^0-9]*\,/g, ''))/revAmount;
+                    cogsAmount[cell.attributes[1].textContent] = parseFloat(cellValue.replace(/[^0-9]*\,/g, ''));
                 }
 
                 if(cell.className == 'opex-amount'){
-                    opexPercentage[cell.attributes[1].textContent] = parseFloat(cellValue.replace(/[^0-9]*\,/g, ''))/rev;
+                    opexPercentage[cell.attributes[1].textContent] = parseFloat(cellValue.replace(/[^0-9]*\,/g, ''))/revAmount;
                 }
 
                 if(cell.className == 'opex-name' && cell.attributes[1].textContent == "DEPRECIATION"){
@@ -218,7 +203,7 @@
                 }
 
                 if(cell.className == 'otex-amount'){
-                    otexPercentage[cell.attributes[1].textContent] = parseFloat(cellValue.replace(/[^0-9]*\,/g, ''))/rev;
+                    otexPercentage[cell.attributes[1].textContent] = parseFloat(cellValue.replace(/[^0-9]*\,/g, ''))/revAmount;
                     otherExpense += parseFloat(cellValue.replace(/[^0-9]*\,/g, ''));
                 }
 
@@ -228,30 +213,53 @@
 
     for (let i = 0; i < cogsPercentage.length; i++) {
         if(!isNaN(cogsPercentage[i])){
-            $('.cogs-percentage-'+i).html(cogsPercentage[i].toFixed(2)+'%');
+            let cogsP = cogsPercentage[i]*100;
+            $('.cogs-percentage-'+i).html(cogsP.toFixed(2)+'%');
+        }
+    }
+
+    for (let i = 0; i < cogsAmount.length; i++) {
+        if(!isNaN(cogsAmount[i])){
+            cogsTAmount += parseFloat(cogsAmount[i]);
         }
     }
 
     for (let i = 0; i < opexPercentage.length; i++) {
         if(!isNaN(opexPercentage[i])){
-            $('.opex-percentage-'+i).html(opexPercentage[i].toFixed(2)+'%');
+            let opexP = opexPercentage[i]*100;
+            $('.opex-percentage-'+i).html(opexP.toFixed(2)+'%');
         }
     }
 
     for (let i = 0; i < otexPercentage.length; i++) {
         if(!isNaN(otexPercentage[i])){
-            $('.otex-percentage-'+i).html(otexPercentage[i].toFixed(2)+'%');
+            let otexP = otexPercentage[i]*100;
+            $('.otex-percentage-'+i).html(otexP.toFixed(2)+'%');
         }
     }
 
+    let grossIncomeAmount = parseFloat(revAmount) - parseFloat(cogsTAmount);
+    $('.gross-income').html(Number(parseFloat(grossIncomeAmount).toFixed(2)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+
+    let opexTotal = parseFloat($('.opex-total-amount').html().replace(/[^0-9]*\,/g, ''));
+    let gross_percentage = (grossIncomeAmount/revAmount)*100;
+    let opex_percentage = (opexTotal/revAmount)*100;
+    let noi = grossIncomeAmount-opexTotal;
+    let noi_percentage = (noi/revAmount)*100;
+
+    $('.gross-percentage').html(gross_percentage.toFixed(2)+'%');
+    $('.opex-total-percentage').html(opex_percentage.toFixed(2)+'%');
+    $('.noi-amount').html(Number(parseFloat(noi).toFixed(2)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    $('.noi-percentage').html(noi_percentage.toFixed(2)+'%');
+
     let ebitda = noi+depreciation;
-    let ebitda_percentage = ebitda/rev;
+    let ebitda_percentage = (ebitda/revAmount)*100;
     $('.ebitda-amount').html(Number(parseFloat(ebitda).toFixed(2)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
     $('.ebitda-percentage').html(ebitda_percentage.toFixed(2)+'%');
 
 
     let totalExpense = opexTotal+otherExpense;
-    let totalExpense_percentage = totalExpense/rev;
+    let totalExpense_percentage = (totalExpense/revAmount)*100;
     $('.total-expense-amount').html(Number(parseFloat(totalExpense).toFixed(2)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
     $('.total-expense-percentage').html(totalExpense_percentage.toFixed(2)+'%');
 
