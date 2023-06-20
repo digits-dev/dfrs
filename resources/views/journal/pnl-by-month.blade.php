@@ -51,8 +51,8 @@
                         @else
                             <th>REVENUE</th>
                             @foreach($columnYear as $key => $year)
-                            <th class="text-center">{{ $year }}</th>
-                            <th>%</th>
+                                <th class="revenue-amount" data-id="{{ $year }}">0.00</th>
+                                <th><span class="revenue-percentage-{{ $year }}">%</span></th>
                         @endforeach
                         @endif
                     </tr>
