@@ -91,7 +91,7 @@
                     @if(!empty($opex) && count($opex) != 0)
                     @foreach($opex as $key => $opx)
                     <tr class="opex">
-                        <td class="opex-name" data-name="{{ $opx->chart_account_subtype }}">{{ $opx->chart_account_subtype }}</td>
+                        <td class="opex-name" data-name="{{ $opx->chart_account_subtype }}" data-value="{{ number_format($opx->amount,2) }}">{{ $opx->chart_account_subtype }}</td>
                         <td class="opex-amount" data-id="{{ $key }}">{{ number_format($opx->amount,2) }}</td>
                         <th><span class="opex-percentage-{{ $key }}">%</span></th>
                     </tr>
@@ -199,7 +199,7 @@
                 }
 
                 if(cell.className == 'opex-name' && cell.attributes[1].textContent == "DEPRECIATION"){
-                    depreciation = cell.textContent;
+                    depreciation = parseFloat(cell.attributes[2].textContent.replace(/[^0-9]*\,/g, ''));
                 }
 
                 if(cell.className == 'otex-amount'){
