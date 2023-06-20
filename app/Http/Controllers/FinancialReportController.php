@@ -251,6 +251,14 @@ class FinancialReportController extends Controller
             ->where('location_name',$request->location)
             ->get();
 
+        $otex_sum = DB::table('otex_by_location_year_month')
+            ->select('pnldate',DB::raw('sum(amount) as sum_amount'),'inter_company_name')
+            ->whereBetween('pnldate',[$datefrom,$dateto])
+            ->where('inter_company_name',$request->company)
+            ->where('location_name',$request->location)
+            ->groupBy('pnldate','inter_company_name')
+            ->get();
+
         $data['columnYear'] = self::generateColumnYear($request->year,$request->month);
         $data['revenues'] = $revenues;
         $data['revenues_data'] = $final_revenue;
@@ -260,6 +268,7 @@ class FinancialReportController extends Controller
         $data['opex_data'] = $final_opex;
         $data['opex_sum'] = $opex_sum;
         $data['otex'] = $otex;
+        $data['otex_sum'] = $otex_sum;
         $data['otex_data'] = $final_otex;
         $data['year'] = $request->year;
         $data['location'] = $request->location;
