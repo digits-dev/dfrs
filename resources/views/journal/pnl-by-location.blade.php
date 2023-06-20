@@ -92,9 +92,9 @@
                     @if(!empty($opex) && count($opex) != 0)
                     @foreach($opex_data as $key => $opx)
                     <tr>
-                        <td class="opex-name" data-name="{{ $opx->chart_account_subtype }}" data-value="{{ number_format($opx->amount,2) }}">{{ $opx->chart_account_subtype }}</td>
+                        <td class="opex-name">{{ $opx->chart_account_subtype }}</td>
                         @foreach($columnYear as $keyYear => $opexYear)
-                            <td class="opex-amount" data-id="{{ $opexYear }}" data-opex="{{ $key }}">{{ number_format($opx->$opexYear,2) }}</td>
+                            <td class="opex-amount" data-id="{{ $opexYear }}" data-opex="{{ $key }}" data-name="{{ $opx->chart_account_subtype }}">{{ number_format($opx->$opexYear,2) }}</td>
                             <th><span class="opex-percentage-{{ $opexYear }}{{ $key }}">%</span></th>
                         @endforeach
                     </tr>
@@ -228,10 +228,9 @@
 
                 if(cell.className == 'opex-amount'){
                     opexPercentage[cell.attributes[1].textContent+cell.attributes[2].textContent] = parseFloat(cellValue.replace(/[^0-9]*\,/g, ''))/revAmount[cell.attributes[1].textContent];
-                }
-
-                if(cell.className == 'opex-name' && cell.attributes[1].textContent == "DEPRECIATION"){
-                    depreciation[cell.attributes[1].textContent] = parseFloat(cell.attributes[2].textContent.replace(/[^0-9]*\,/g, ''));
+                    if(cell.attributes[3].textContent == "DEPRECIATION"){
+                        depreciation[cell.attributes[1].textContent] = parseFloat(cellValue.replace(/[^0-9]*\,/g, ''));
+                    }
                 }
 
                 if(cell.className == 'otex-amount'){
