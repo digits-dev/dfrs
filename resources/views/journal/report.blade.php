@@ -46,9 +46,11 @@
 
             <div class="col-md-4">
                 <b> Company </b>
-                <select name="company" id="company" class="form-control" title="company">
+                <select name="company" id="company" class="form-control" title="company" required>
                     <option value="">Please select company</option>
-                    <option value="DIGITS">DIGITS TRADING CORP</option>
+                    @foreach ($companies as $company)
+                        <option value="{{ $company->inter_company_name }}">{{ $company->inter_company_name }}</option>
+                    @endforeach
                 </select>
             </div>
 
