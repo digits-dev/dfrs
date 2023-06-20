@@ -199,7 +199,7 @@
                 }
 
                 if(cell.className == 'opex-name' && cell.attributes[1].textContent == "DEPRECIATION"){
-                    depreciation = parseFloat(cell.textContent.replace(/[^0-9]*\,/g, ''));
+                    depreciation = cell.textContent;
                 }
 
                 if(cell.className == 'otex-amount'){
@@ -252,7 +252,7 @@
     $('.noi-amount').html(Number(parseFloat(noi).toFixed(2)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
     $('.noi-percentage').html(noi_percentage.toFixed(2)+'%');
 
-    let ebitda = noi+depreciation;
+    let ebitda = parseFloat(noi)+parseFloat(depreciation);
     let ebitda_percentage = (ebitda/revAmount)*100;
     $('.ebitda-amount').html(Number(parseFloat(ebitda).toFixed(2)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
     $('.ebitda-percentage').html(ebitda_percentage.toFixed(2)+'%');

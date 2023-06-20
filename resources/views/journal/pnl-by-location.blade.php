@@ -231,7 +231,7 @@
                 }
 
                 if(cell.className == 'opex-name' && cell.attributes[1].textContent == "DEPRECIATION"){
-                    depreciation[cell.attributes[1].textContent] = parseFloat(cellValue.replace(/[^0-9]*\,/g, ''));
+                    depreciation[cell.attributes[1].textContent] = cell.textContent;
                 }
 
                 if(cell.className == 'otex-amount'){
