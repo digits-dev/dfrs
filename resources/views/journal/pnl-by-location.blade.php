@@ -46,7 +46,7 @@
                         <th>REVENUE</th>
                         @foreach($columnYear as $key => $rev)
                             <td class="revenue-amount" data-id="{{ $rev }}">{{ number_format($revenues_data[0]->$rev,2) }}</td>
-                            <th>%</th>
+                            <th>100%</th>
                         @endforeach
                         @else
                             <th>REVENUE</th>
@@ -61,9 +61,9 @@
                     @if(!empty($cogs) && count($cogs) != 0)
                     <tr class="cogs">
                         <th>{{ $cogs_data[0]->chart_account_subtype }}</th>
-                        @foreach($columnYear as $key => $cog)
-                            <td class="cogs-amount" data-id="{{ $cog }}">{{ number_format($cogs_data[0]->$cog,2) }}</td>
-                            <th>%</th>
+                        @foreach($columnYear as $key => $year)
+                            <td class="cogs-amount" data-id="{{ $year }}">{{ number_format($cogs_data[0]->$year,2) }}</td>
+                            <th><span class="cogs-percentage-{{ $year }}">%</span></th>
                         @endforeach
                     </tr>
                     @else
@@ -71,7 +71,7 @@
                         <th>COST OF SALES</th>
                         @foreach($columnYear as $key => $year)
                             <td class="cogs-amount" data-id="{{ $year }}">0.00</td>
-                            <th>%</th>
+                            <th><span class="cogs-percentage-{{ $year }}">%</</th>
                         @endforeach
                     </tr>
                     @endif
