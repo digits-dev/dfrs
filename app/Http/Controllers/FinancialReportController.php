@@ -194,6 +194,13 @@ class FinancialReportController extends Controller
         return $data;
     }
 
+    public function byCompanyQuarter(Request $request)
+    {
+        $data = [];
+
+        return $data;
+    }
+
     public function byLocationQuarter(Request $request)
     {
         # code...
@@ -208,7 +215,7 @@ class FinancialReportController extends Controller
     {
         $data = [];
 
-        $pivotParameter = '"'.$request->company.'","'.$request->location.'","'.$request->year.'-01","'.$request->year.'-'.str_pad($request->month,2,"0",STR_PAD_LEFT).'"';
+        $pivotParameter = '"'.$request->location.'","'.$request->year.'-01","'.$request->year.'-'.str_pad($request->month,2,"0",STR_PAD_LEFT).'"';
         $datefrom = $request->year.'-01';
         $dateto = $request->year.'-'.str_pad($request->month,2,"0",STR_PAD_LEFT);
 
@@ -219,44 +226,38 @@ class FinancialReportController extends Controller
 
         $revenues = DB::table('revenue_by_location_year_month')
             ->whereBetween('pnldate',[$datefrom,$dateto])
-            ->where('inter_company_name',$request->company)
             ->where('location_name',$request->location)
             ->get();
 
         $cogs = DB::table('cogs_by_location_year_month')
             ->whereBetween('pnldate',[$datefrom,$dateto])
-            ->where('inter_company_name',$request->company)
             ->where('location_name',$request->location)
             ->get();
 
         $opex = DB::table('opex_by_location_year_month')
             ->whereBetween('pnldate',[$datefrom,$dateto])
-            ->where('inter_company_name',$request->company)
             ->where('location_name',$request->location)
             ->orderBy('sequence','ASC')
             ->orderBy('pnldate','ASC')
             ->get();
 
         $opex_sum = DB::table('opex_by_location_year_month')
-            ->select('pnldate',DB::raw('sum(amount) as sum_amount'),'inter_company_name','location_name')
+            ->select('pnldate',DB::raw('sum(amount) as sum_amount'),'location_name')
             ->whereBetween('pnldate',[$datefrom,$dateto])
-            ->where('inter_company_name',$request->company)
             ->where('location_name',$request->location)
-            ->groupBy('pnldate','inter_company_name','location_name')
+            ->groupBy('pnldate','location_name')
             ->get();
 
         $otex = DB::table('otex_by_location_year_month')
             ->whereBetween('pnldate',[$datefrom,$dateto])
-            ->where('inter_company_name',$request->company)
             ->where('location_name',$request->location)
             ->get();
 
         $otex_sum = DB::table('otex_by_location_year_month')
-            ->select('pnldate',DB::raw('sum(amount) as sum_amount'),'inter_company_name')
+            ->select('pnldate',DB::raw('sum(amount) as sum_amount'))
             ->whereBetween('pnldate',[$datefrom,$dateto])
-            ->where('inter_company_name',$request->company)
             ->where('location_name',$request->location)
-            ->groupBy('pnldate','inter_company_name')
+            ->groupBy('pnldate')
             ->get();
 
         $data['columnYear'] = self::generateColumnYear($request->year,$request->month);

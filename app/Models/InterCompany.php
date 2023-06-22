@@ -15,6 +15,7 @@ class InterCompany extends Model
     protected $fillable = [
         'inter_company_code',
         'inter_company_name',
+        'is_viewable',
         'status',
     ];
 
@@ -25,7 +26,8 @@ class InterCompany extends Model
 
     public function scopeActive($query)
     {
-        return $query->where('status','ACTIVE')->orderBy('inter_company_name','ASC')->get();
+        return $query->where('status','ACTIVE')->where('is_viewable',1)
+            ->orderBy('inter_company_name','ASC')->get();
     }
 
     public static function boot()

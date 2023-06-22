@@ -29,7 +29,7 @@
             </div>
 
             <table class="table table-bordered" id="pnl-month">
-                <thead>
+                <thead style="background-color: #0047ab; color:white;">
                     <tr>
                         <th class="text-center" width="20%">{{ $company }}</th>
                         @foreach($columnYear as $key => $year)

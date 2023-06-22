@@ -3,7 +3,8 @@
     use App\Exports\ExcelTemplate;
     use App\Imports\JournalImport;
     use App\Models\Currency;
-    use App\Models\InterCompany;
+use App\Models\Department;
+use App\Models\InterCompany;
     use App\Models\InvoiceStatus;
     use App\Models\InvoiceType;
     use App\Models\Location;
@@ -436,6 +437,7 @@
             $data = [];
             $data['page_title'] = 'Generate Report';
             $data['companies'] = InterCompany::active();
+            $data['departments'] = Department::active();
             $data['locations'] = Location::active();
             return view('journal.report',$data);
         }
@@ -449,7 +451,7 @@
             $pnl_report = new FinancialReportController();
 
             switch ($request->report_type) {
-                case 'month':
+                case 'company-month':
                     {
                         $data = $pnl_report->byCompanyYearMonth($request);
                         // dd($data);
@@ -457,7 +459,7 @@
                     }
                     break;
 
-                case 'year':
+                case 'company-year':
                     {
                         $data = $pnl_report->byCompanyYear($request);
                         // dd($data);
@@ -465,7 +467,15 @@
                     }
                     break;
 
-                case 'location':
+                case 'company-year':
+                    {
+                        $data = $pnl_report->byCompanyQuarter($request);
+                        // dd($data);
+                        return view('journal.pnl-by-quarter',$data);
+                    }
+                    break;
+
+                case 'location-month':
                     {
                         $data = $pnl_report->byLocationYearMonth($request);
                         // dd($data);
@@ -474,7 +484,7 @@
                     break;
 
                 default:
-                    # code...
+                    return 'no report!';
                     break;
             }
 

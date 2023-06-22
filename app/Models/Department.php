@@ -15,12 +15,18 @@ class Department extends Model
     protected $fillable = [
         'department_code',
         'department_name',
+        'is_viewable',
         'status',
     ];
 
     public function scopeWithName($query, $department)
     {
         return $query->where('department_name',$department)->where('status','ACTIVE')->first();
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('status','ACTIVE')->orderBy('department_name','ASC')->get();
     }
 
     public static function boot()

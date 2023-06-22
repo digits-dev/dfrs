@@ -15,14 +15,27 @@
                 <b> Report Type </b>
                 <select name="report_type" id="report_type" class="form-control report-type" title="Type" required>
                     <option value="">Please select report type</option>
-                    <option value="year">BY YEAR</option>
-                    <option value="month">BY MONTH</option>
-                    <option value="quarter">BY QUARTER</option>
-                    <option value="location">BY LOCATION</option>
-                    <option value="company">BY COMPANY</option>
-                    <option value="department">BY DEPARTMENT</option>
-                    <option value="channel">BY CHANNEL</option>
-                    <option value="concepts">BY CONCEPTS</option>
+                    {{-- <option value="year">BY YEAR</option> --}}
+                    {{-- <option value="month">BY MONTH</option> --}}
+                    {{-- <option value="quarter">BY QUARTER</option> --}}
+                    <option value="company-year">BY COMPANY - YEAR</option>
+                    <option value="company-month">BY COMPANY - MONTH</option>
+                    <option value="company-qtr">BY COMPANY - QUARTER</option>
+
+                    <option value="" disabled>------</option>
+
+                    <option value="location-year">BY LOCATION - YEAR</option>
+                    <option value="location-month">BY LOCATION - MONTH</option>
+                    <option value="location-qtr">BY LOCATION - QUARTER</option>
+
+                    <option value="" disabled>------</option>
+
+                    <option value="department-year">BY DEPARTMENT - YEAR</option>
+                    <option value="department-month">BY DEPARTMENT - MONTH</option>
+                    <option value="department-qtr">BY DEPARTMENT - QUARTER</option>
+
+                    {{-- <option value="channel">BY CHANNEL</option> --}}
+                    {{-- <option value="concepts">BY CONCEPTS</option> --}}
                 </select>
             </div>
             <div class="col-md-12">
@@ -39,14 +52,14 @@
 
             <div class="col-md-4">
                 <b> Year </b>
-                <select name="year" id="year" class="form-control" title="year">
+                <select name="year" id="year" class="form-control" title="year" disabled>
                     <option value="">Please select year</option>
                 </select>
             </div>
 
             <div class="col-md-4">
                 <b> Company </b>
-                <select name="company" id="company" class="form-control" title="company" required>
+                <select name="company" id="company" class="form-control" title="company" disabled>
                     <option value="">Please select company</option>
                     @foreach ($companies as $company)
                         <option value="{{ $company->inter_company_name }}">{{ $company->inter_company_name }}</option>
@@ -68,6 +81,27 @@
                 <b> Month </b>
                 <select name="month" id="month" class="form-control" title="month" disabled>
                     <option value="">Please select month</option>
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <b> Quarter </b>
+                <select name="quarter" id="quarter" class="form-control" title="quarter" disabled>
+                    <option value="">Please select quarter</option>
+                    <option value="1">Q1</option>
+                    <option value="2">Q2</option>
+                    <option value="3">Q3</option>
+                    <option value="4">Q4</option>
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <b> Department </b>
+                <select name="department" id="department" class="form-control" title="department" disabled>
+                    <option value="">Please select department</option>
+                    @foreach ($departments as $department)
+                        <option value="{{ $department->department_name }}">{{ $department->department_name }}</option>
+                    @endforeach
                 </select>
             </div>
 
@@ -121,20 +155,73 @@
     $('#report_type').change(function(){
         let reportType = $(this).val();
         switch (reportType) {
-            case 'year':
+            case 'company-year':
+                $('#year').removeAttr('disabled');
+                $('#year').prop('required',true);
 
+                $('#company').removeAttr('disabled');
+                $('#company').prop('required',true);
             break;
 
-            case 'month':
+            case 'company-month':
+                $('#year').removeAttr('disabled');
+                $('#year').prop('required',true);
+
+                $('#company').removeAttr('disabled');
+                $('#company').prop('required',true);
+
                 $('#month').removeAttr('disabled');
                 $('#month').prop('required',true);
             break;
 
-            case 'location':
+            case 'company-qtr':
+                $('#year').removeAttr('disabled');
+                $('#year').prop('required',true);
+
+                $('#company').removeAttr('disabled');
+                $('#company').prop('required',true);
+
+                $('#quarter').removeAttr('disabled');
+                $('#quarter').prop('required',true);
+            break;
+
+            case 'location-year':
+                $('#year').removeAttr('disabled');
+                $('#year').prop('required',true);
+
                 $('#location').removeAttr('disabled');
                 $('#location').prop('required',true);
+
+            break;
+
+            case 'location-month':
+                $('#year').removeAttr('disabled');
+                $('#year').prop('required',true);
+
                 $('#month').removeAttr('disabled');
                 $('#month').prop('required',true);
+
+                $('#location').removeAttr('disabled');
+                $('#location').prop('required',true);
+            break;
+
+            case 'location-qtr':
+                $('#year').removeAttr('disabled');
+                $('#year').prop('required',true);
+
+                $('#quarter').removeAttr('disabled');
+                $('#quarter').prop('required',true);
+
+                $('#location').removeAttr('disabled');
+                $('#location').prop('required',true);
+            break;
+            // department
+            case 'department-year':
+                $('#year').removeAttr('disabled');
+                $('#year').prop('required',true);
+
+                $('#department').removeAttr('disabled');
+                $('#department').prop('required',true);
             break;
 
             default:
