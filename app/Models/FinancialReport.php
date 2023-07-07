@@ -13,6 +13,7 @@ class FinancialReport extends Model
     protected $table = 'financial_reports';
 
     protected $fillable = [
+        'reference_number',
         'invoice_date',
         'invoice_number',
         'invoice_types_id',

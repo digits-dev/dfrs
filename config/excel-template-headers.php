@@ -2,6 +2,7 @@
 
 return [
     'journal-entries' => [
+        'REFERENCE NUMBER',
         'INVOICE DATE',
         'INVOICE NUMBER',
         'INVOICE TYPE',

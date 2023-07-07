@@ -64,6 +64,7 @@ class JournalImport implements
         $this->accounts = explode('.',$row['account']);
 
         FinancialReport::updateOrCreate([
+            'reference_number' => $row['reference_number'],
             'invoice_date' => Carbon::parse($row['invoice_date'])->format('Y-m-d'),
             'invoice_number' => $row['invoice_number'],
             'invoice_types_id' => $invoiceType->id ?? NULL,
@@ -79,7 +80,7 @@ class JournalImport implements
             'invoice_amount' => $row['invoice_amount'],
             'po_number' => $row['po_number'],
             'gl_date' => Carbon::parse($row['gl_date'])->format('Y-m-d'),
-            'description' => trim(strtoupper($row['description'])),
+            'description' => trim(mb_strtoupper($row['description'])),
             'chart_account' => $row['account'],
             'company' => $this->accounts[0],
             'location' => $this->accounts[1],
@@ -94,12 +95,15 @@ class JournalImport implements
 
     public function chunkSize(): int
     {
-        return 1000;
+        return 2000;
     }
 
     public function rules(): array
     {
         return [
+            '*.reference_number' => ['required'],
+            '*.invoice_date' => ['required','date_format:Y-m-d'],
+            '*.gl_date' =>['required','date_format:Y-m-d'],
             '*.invoice_type' => ['required'],
             '*.trading_partner' => ['required'],
             '*.invoice_status' => ['required'],
@@ -117,7 +121,7 @@ class JournalImport implements
     {
         $config['content'] = "Your import job is complete!";
         $config['to'] = CRUDBooster::adminPath('financial_reports');
-        $config['id_cms_users'] = [1];
+        $config['id_cms_users'] = [CRUDBooster::myId()];
         CRUDBooster::sendNotification($config);
     }
 }
