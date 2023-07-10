@@ -455,7 +455,7 @@ use App\Models\InterCompany;
                     {
                         $data = $pnl_report->byCompanyYearMonth($request);
                         // dd($data);
-                        return view('journal.pnl-by-month',$data);
+                        return view('journal.pnl-by-company',$data); //pnl-by-month
                     }
                     break;
 
@@ -477,7 +477,39 @@ use App\Models\InterCompany;
 
                 case 'location-month':
                     {
-                        $data = $pnl_report->byLocationYearMonth($request);
+                        if(in_array('ALL',$request->location)){
+                            $data = $pnl_report->byAllLocationYearMonth($request);
+                            return view('journal.pnl-by-all-location',$data);
+                        }
+                        else{
+                            $data = $pnl_report->byLocationYearMonth($request);
+                            return view('journal.pnl-by-location',$data);
+                        }
+
+                    }
+                    break;
+
+                case 'location-year':
+                    {
+                        if(in_array('ALL',$request->location)){
+                            $data = $pnl_report->byAllLocationYear($request);
+                        }
+                        else{
+                            $data = $pnl_report->byLocationYear($request);
+                        }
+                        // dd($data);
+                        return view('journal.pnl-by-location',$data);
+                    }
+                    break;
+
+                case 'location-quarter':
+                    {
+                        if(in_array('ALL',$request->location)){
+                            $data = $pnl_report->byAllLocationQuarter($request);
+                        }
+                        else{
+                            $data = $pnl_report->byLocationQuarter($request);
+                        }
                         // dd($data);
                         return view('journal.pnl-by-location',$data);
                     }

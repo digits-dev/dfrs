@@ -3,6 +3,18 @@
 @section('content')
 
 @push('head')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+    .select2-selection__rendered {
+    line-height: 31px !important;
+    }
+    .select2-container .select2-selection--single {
+        height: 34px !important;
+    }
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
 
 @endpush
 
@@ -18,6 +30,7 @@
                     {{-- <option value="year">BY YEAR</option> --}}
                     {{-- <option value="month">BY MONTH</option> --}}
                     {{-- <option value="quarter">BY QUARTER</option> --}}
+
                     <option value="company-year">BY COMPANY - YEAR</option>
                     <option value="company-month">BY COMPANY - MONTH</option>
                     <option value="company-qtr">BY COMPANY - QUARTER</option>
@@ -50,30 +63,10 @@
 
         <div class="col-md-8">
 
-            <div class="col-md-4">
+            <div class="col-md-4" id="year-div">
                 <b> Year </b>
                 <select name="year" id="year" class="form-control" title="year" disabled>
                     <option value="">Please select year</option>
-                </select>
-            </div>
-
-            <div class="col-md-4">
-                <b> Company </b>
-                <select name="company" id="company" class="form-control" title="company" disabled>
-                    <option value="">Please select company</option>
-                    @foreach ($companies as $company)
-                        <option value="{{ $company->inter_company_name }}">{{ $company->inter_company_name }}</option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div class="col-md-4">
-                <b> Location </b>
-                <select name="location" id="location" class="form-control" title="location" disabled>
-                    <option value="">Please select location</option>
-                    @foreach ($locations as $location)
-                        <option value="{{ $location->location_name }}">{{ $location->location_name }}</option>
-                    @endforeach
                 </select>
             </div>
 
@@ -84,7 +77,7 @@
                 </select>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-4" id="quarter-div">
                 <b> Quarter </b>
                 <select name="quarter" id="quarter" class="form-control" title="quarter" disabled>
                     <option value="">Please select quarter</option>
@@ -95,10 +88,33 @@
                 </select>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-4" id="company-div">
+                <b> Company </b>
+                <select name="company[]" id="company" class="form-control" title="company" multiple="multiple" disabled>
+                    {{-- <option value="">Please select company</option> --}}
+                    <option value="ALL">ALL</option>
+                    @foreach ($companies as $company)
+                        <option value="{{ $company->inter_company_name }}">{{ $company->inter_company_name }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="col-md-4" id="location-div">
+                <b> Location </b>
+                <select name="location[]" id="location" class="form-control" title="location" multiple="multiple" disabled>
+                    {{-- <option value="">Please select location</option> --}}
+                    <option value="ALL">ALL</option>
+                    @foreach ($locations as $location)
+                        <option value="{{ $location->location_name }}">{{ $location->location_name }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="col-md-4" id="department-div">
                 <b> Department </b>
-                <select name="department" id="department" class="form-control" title="department" disabled>
-                    <option value="">Please select department</option>
+                <select name="department[]" id="department" class="form-control" title="department" multiple="multiple" disabled>
+                    {{-- <option value="">Please select department</option> --}}
+                    <option value="ALL">ALL</option>
                     @foreach ($departments as $department)
                         <option value="{{ $department->department_name }}">{{ $department->department_name }}</option>
                     @endforeach
@@ -119,7 +135,14 @@
 @endsection
 
 @push('bottom')
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script type="text/javascript">
+
+    $(document).ready(function() {
+        $("#company").select2();
+        $("#location").select2();
+        $("#department").select2();
+    });
 
     const monthNames = ["January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
@@ -157,71 +180,71 @@
         switch (reportType) {
             case 'company-year':
                 $('#year').removeAttr('disabled');
-                $('#year').prop('required',true);
+                $('#year').attr('required',true);
 
                 $('#company').removeAttr('disabled');
-                $('#company').prop('required',true);
+                $('#company').attr('required',true);
             break;
 
             case 'company-month':
                 $('#year').removeAttr('disabled');
-                $('#year').prop('required',true);
+                $('#year').attr('required',true);
 
                 $('#company').removeAttr('disabled');
-                $('#company').prop('required',true);
+                $('#company').attr('required',true);
 
                 $('#month').removeAttr('disabled');
-                $('#month').prop('required',true);
+                $('#month').attr('required',true);
             break;
 
             case 'company-qtr':
                 $('#year').removeAttr('disabled');
-                $('#year').prop('required',true);
+                $('#year').attr('required',true);
 
                 $('#company').removeAttr('disabled');
-                $('#company').prop('required',true);
+                $('#company').attr('required',true);
 
                 $('#quarter').removeAttr('disabled');
-                $('#quarter').prop('required',true);
+                $('#quarter').attr('required',true);
             break;
 
             case 'location-year':
                 $('#year').removeAttr('disabled');
-                $('#year').prop('required',true);
+                $('#year').attr('required',true);
 
                 $('#location').removeAttr('disabled');
-                $('#location').prop('required',true);
-
+                $('#location').attr('required',true);
             break;
 
             case 'location-month':
                 $('#year').removeAttr('disabled');
-                $('#year').prop('required',true);
+                $('#year').attr('required',true);
 
                 $('#month').removeAttr('disabled');
-                $('#month').prop('required',true);
+                $('#month').attr('required',true);
 
                 $('#location').removeAttr('disabled');
-                $('#location').prop('required',true);
+                $('#location').attr('required',true);
+                // $('#location').attr('multiple','multiple');
             break;
 
             case 'location-qtr':
                 $('#year').removeAttr('disabled');
-                $('#year').prop('required',true);
+                $('#year').attr('required',true);
 
                 $('#quarter').removeAttr('disabled');
-                $('#quarter').prop('required',true);
+                $('#quarter').attr('required',true);
 
                 $('#location').removeAttr('disabled');
-                $('#location').prop('required',true);
+                $('#location').attr('required',true);
             break;
             // department
             case 'department-year':
                 $('#year').removeAttr('disabled');
-                $('#year').prop('required',true);
+                $('#year').attr('required',true);
 
                 $('#department').removeAttr('disabled');
-                $('#department').prop('required',true);
+                $('#department').attr('required',true);
             break;
 
             default:
