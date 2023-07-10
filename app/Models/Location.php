@@ -26,7 +26,8 @@ class Location extends Model
 
     public function scopeActive($query)
     {
-        return $query->where('status','ACTIVE')->orderBy('location_name','ASC')->get();
+        return $query->where('status','ACTIVE')->where('is_viewable',1)
+            ->orderBy('location_name','ASC')->get();
     }
 
     public static function boot()
